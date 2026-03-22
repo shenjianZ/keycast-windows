@@ -442,7 +442,9 @@ impl KeycastService {
     fn load_overlay_config(app: &AppHandle) -> Result<KeycastOverlayConfig, String> {
         let path = Self::overlay_config_path(app)?;
         if !path.exists() {
-            return Ok(KeycastOverlayConfig::default());
+            let defaults = KeycastOverlayConfig::default();
+            Self::save_overlay_config(app, &defaults)?;
+            return Ok(defaults);
         }
         let content =
             fs::read_to_string(&path).map_err(|e| format!("读取按键屏显配置失败: {}", e))?;

@@ -36,6 +36,22 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Inject updater public key
+        shell: pwsh
+        env:
+          KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY: ${{ secrets.KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY)) {
+            throw "Missing KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY secret"
+          }
+          $path = "src-tauri/tauri.conf.json"
+          $content = Get-Content $path -Raw
+          $content = $content.Replace(
+            "__KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY__",
+            $env:KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY.Trim()
+          )
+          Set-Content -Path $path -Value $content
+
       - name: Build Windows bundles
         run: pnpm tauri build --target x86_64-pc-windows-msvc
         env:

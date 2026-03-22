@@ -64,6 +64,36 @@ Windows 打包产物位于 `src-tauri/target/x86_64-pc-windows-msvc/release/bund
   - `KEYCAST_WINDOWS_TAURI_SIGNING_PRIVATE_KEY_PASSWORD` -> `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`
 - 本地开发通常只在需要验证 updater 时注入：
   - `KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY`
+- Windows 开发环境可通过 PowerShell 写入当前用户环境变量：
+
+```powershell
+[Environment]::SetEnvironmentVariable(
+  "KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY",
+  (Get-Content $HOME\.tauri\keycast-windows.key.pub -Raw).Trim(),
+  "User"
+)
+```
+
+- 查看是否写入成功：
+
+```powershell
+[Environment]::GetEnvironmentVariable(
+  "KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY",
+  "User"
+)
+```
+
+- 删除该变量：
+
+```powershell
+[Environment]::SetEnvironmentVariable(
+  "KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY",
+  $null,
+  "User"
+)
+```
+
+- 设置或删除后，重新打开一个新的终端窗口再执行 `pnpm tauri dev`。
 - 本地构建带签名的更新包时需要再额外注入：
   - `TAURI_SIGNING_PRIVATE_KEY`
   - `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`

@@ -155,7 +155,9 @@ impl AppSettingsService {
     fn load(app: &AppHandle) -> Result<AppSettings, String> {
         let path = Self::path(app)?;
         if !path.exists() {
-            return Ok(AppSettings::default());
+            let defaults = AppSettings::default();
+            Self::save(app, &defaults)?;
+            return Ok(defaults);
         }
         let content = fs::read_to_string(path).map_err(|e| format!("读取应用设置失败: {}", e))?;
         serde_json::from_str(&content).map_err(|e| format!("解析应用设置失败: {}", e))
