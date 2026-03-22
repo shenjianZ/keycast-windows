@@ -12,6 +12,7 @@
     "core:window:allow-set-size",
     "core:window:allow-is-visible",
     "opener:default",
+    "updater:default",
     "autostart:allow-enable",
     "autostart:allow-disable",
     "autostart:allow-is-enabled"

@@ -1,8 +1,9 @@
 import { Bug, Github, Globe, MessageSquare } from "lucide-react";
 import { useI18n } from "../i18n";
+import type { UpdateState } from "../lib/types";
 
-type Props = { version: string };
-const repoUrl = "https://github.com/shenjianZ/-keycast-windows";
+type Props = { version: string; updateState: UpdateState };
+const repoUrl = "https://github.com/shenjianZ/keycast-windows";
 
 const links = [
   { key: "home", labelZh: "主页", labelEn: "Homepage", icon: Globe, href: repoUrl },
@@ -17,8 +18,18 @@ const links = [
   { key: "discord", labelZh: "Discord", labelEn: "Discord", icon: MessageSquare, href: repoUrl },
 ] as const;
 
-export function AboutPage({ version }: Props) {
+export function AboutPage({ version, updateState }: Props) {
   const { locale, t } = useI18n();
+  const updateLine =
+    updateState.status === "downloaded"
+      ? `${t("updateDownloaded")} · v${updateState.latestVersion}`
+      : updateState.status === "downloading"
+        ? t("updateDownloading")
+        : updateState.status === "available"
+          ? `${t("updateAvailable")} · v${updateState.latestVersion}`
+          : updateState.status === "up-to-date"
+            ? t("updateLatest")
+            : updateState.error ?? t("updateDesc");
 
   return (
     <div className="max-w-3xl px-8 py-8">
@@ -43,6 +54,9 @@ export function AboutPage({ version }: Props) {
           </div>
           <p className="max-w-lg text-[13px] leading-6 text-slate-500 dark:text-slate-400">
             {t("aboutIntro")}
+          </p>
+          <p className="max-w-lg text-[13px] leading-6 text-sky-700 dark:text-sky-300">
+            {updateLine}
           </p>
         </div>
       </div>

@@ -3,7 +3,8 @@
     "allow": [
       "Bash(cargo fmt:*)",
       "Bash(pnpm prettier:*)",
-      "Bash(pnpm add:*)"
+      "Bash(pnpm add:*)",
+      "Bash(pnpm:*)"
     ]
   }
 }

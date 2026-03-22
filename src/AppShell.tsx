@@ -50,6 +50,8 @@ export default function AppShell() {
                     autostart={app.autostart}
                     localeOverride={app.settings.locale_override}
                     appTheme={app.settings.theme}
+                    version={app.version}
+                    updateState={app.updateState}
                     globalShortcut={app.settings.global_shortcut}
                     globalShortcutEnabled={app.settings.global_shortcut_enabled}
                     updateConfig={app.updateConfig}
@@ -58,12 +60,15 @@ export default function AppShell() {
                     toggleAutostart={app.toggleAutostart}
                     setLocaleOverride={app.setLocaleOverride}
                     setAppTheme={app.setAppTheme}
+                    checkForUpdates={app.checkForUpdates}
+                    downloadLatestUpdate={app.downloadLatestUpdate}
+                    installLatestUpdate={app.installLatestUpdate}
                     setGlobalShortcut={app.setGlobalShortcut}
                     setGlobalShortcutEnabled={app.setGlobalShortcutEnabled}
                   />
                 }
               />
-              <Route path="/about" element={<AboutPage version={app.version} />} />
+              <Route path="/about" element={<AboutPage version={app.version} updateState={app.updateState} />} />
             </Routes>
           </main>
         </div>

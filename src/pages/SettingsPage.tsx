@@ -9,7 +9,13 @@ import {
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { useI18n } from "../i18n";
-import type { AppTheme, KeycastOverlayConfig, KeycastState, LocaleOverride } from "../lib/types";
+import type {
+  AppTheme,
+  KeycastOverlayConfig,
+  KeycastState,
+  LocaleOverride,
+  UpdateState,
+} from "../lib/types";
 import { SettingsGroup, SettingsRow } from "../components/settings-group";
 import { Sun, Moon } from "lucide-react";
 
@@ -74,6 +80,8 @@ type Props = {
   autostart: boolean;
   localeOverride: LocaleOverride;
   appTheme: AppTheme;
+  version: string;
+  updateState: UpdateState;
   globalShortcut: string;
   globalShortcutEnabled: boolean;
   updateConfig: (updater: React.SetStateAction<KeycastOverlayConfig>, message: string) => void;
@@ -82,6 +90,9 @@ type Props = {
   toggleAutostart: () => Promise<void>;
   setLocaleOverride: (next: LocaleOverride) => Promise<void>;
   setAppTheme: (theme: AppTheme) => Promise<void>;
+  checkForUpdates: () => Promise<unknown>;
+  downloadLatestUpdate: () => Promise<void>;
+  installLatestUpdate: () => Promise<void>;
   setGlobalShortcut: (shortcut: string) => Promise<void>;
   setGlobalShortcutEnabled: (enabled: boolean) => Promise<void>;
 };
@@ -91,6 +102,24 @@ export function SettingsPage(props: Props) {
   const shortcutInputRef = useRef<HTMLInputElement>(null);
   const [shortcutDraft, setShortcutDraft] = useState(props.globalShortcut);
   const [isRecordingShortcut, setIsRecordingShortcut] = useState(false);
+  const updateStatusText =
+    props.updateState.status === "checking"
+      ? t("updateChecking")
+      : props.updateState.status === "available"
+        ? t("updateAvailable")
+        : props.updateState.status === "downloading"
+          ? t("updateDownloading")
+          : props.updateState.status === "downloaded"
+            ? t("updateDownloaded")
+            : props.updateState.status === "up-to-date"
+              ? t("updateLatest")
+              : props.updateState.error ?? t("updateDesc");
+  const updateActionLabel =
+    props.updateState.status === "downloaded" ? t("updateInstall") : t("updateDownload");
+  const updateProgress =
+    props.updateState.contentLength && props.updateState.contentLength > 0
+      ? Math.min(100, Math.round((props.updateState.downloadedBytes / props.updateState.contentLength) * 100))
+      : null;
   const toastText = (label: string) => (locale === "zh-CN" ? `${label}已更新` : `${label} updated`);
   const setText = (key: "text_color" | "accent_color", value: string, label: string) =>
     props.updateConfig((current) => ({ ...current, [key]: value }), toastText(label));
@@ -312,6 +341,52 @@ export function SettingsPage(props: Props) {
           enabled={props.autostart}
           onEnabledChange={() => void props.toggleAutostart()}
         />
+      </SettingsGroup>
+      <SettingsGroup title={t("updateSection")}>
+        <div className="space-y-3 px-4 py-4">
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-1">
+              <div className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
+                v{props.version}
+                {props.updateState.latestVersion ? ` -> v${props.updateState.latestVersion}` : ""}
+              </div>
+              <div className="text-sm text-slate-500 dark:text-zinc-500">{updateStatusText}</div>
+              {props.updateState.status === "downloaded" ? (
+                <div className="text-xs text-emerald-600 dark:text-emerald-400">
+                  {t("updateReadyToInstall")}
+                </div>
+              ) : null}
+            </div>
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="secondary" size="compact" onClick={() => void props.checkForUpdates()}>
+                {t("updateCheck")}
+              </Button>
+              <Button
+                type="button"
+                size="compact"
+                disabled={props.updateState.status === "checking" || props.updateState.status === "downloading"}
+                onClick={() =>
+                  void (props.updateState.status === "downloaded"
+                    ? props.installLatestUpdate()
+                    : props.downloadLatestUpdate())
+                }
+              >
+                {updateActionLabel}
+              </Button>
+            </div>
+          </div>
+          {updateProgress !== null ? (
+            <div className="space-y-2">
+              <div className="h-2 rounded-full bg-slate-100 dark:bg-zinc-900">
+                <div
+                  className="h-2 rounded-full bg-sky-500 transition-[width]"
+                  style={{ width: `${updateProgress}%` }}
+                />
+              </div>
+              <div className="text-xs text-slate-500 dark:text-zinc-500">{updateProgress}%</div>
+            </div>
+          ) : null}
+        </div>
       </SettingsGroup>
       <SettingsGroup title={t("languageSection")}>
         <SettingsRow

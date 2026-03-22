@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
 import { createTranslator } from "./i18n";
+import { checkForAppUpdate, downloadAppUpdate, installAppUpdate } from "./lib/updater";
 import {
   initialOverlayConfig,
   readAppSettings,
@@ -20,9 +21,21 @@ import type {
   KeycastOverlayConfig,
   KeycastState,
   LocaleOverride,
+  UpdateState,
+  UpdateSummary,
 } from "./lib/types";
 
 export function useAppModel() {
+  const [updateState, setUpdateState] = useState<UpdateState>({
+    status: "idle",
+    currentVersion: "0.1.0",
+    latestVersion: null,
+    downloadedVersion: null,
+    contentLength: null,
+    downloadedBytes: 0,
+    error: null,
+    availableUpdate: null,
+  });
   const [state, setState] = useState<KeycastState>({
     is_listening: false,
     is_overlay_visible: false,
@@ -45,11 +58,91 @@ export function useAppModel() {
   const hasShownToast = useRef(false);
   const localeRef = useRef(locale);
   const pendingConfigMessage = useRef("设置已更新");
+  const pendingUpdateRef = useRef<Awaited<ReturnType<typeof checkForAppUpdate>> | null>(null);
   const t = createTranslator(locale);
   const notifyUpdated = (message: string) => {
     setToastMessage(message);
     setToastOpen(false);
     window.setTimeout(() => setToastOpen(true), 0);
+  };
+  const setUpdateSummary = (
+    status: UpdateState["status"],
+    summary: UpdateSummary | null,
+    extra?: Partial<UpdateState>
+  ) => {
+    setUpdateState((current) => ({
+      ...current,
+      status,
+      currentVersion: summary?.currentVersion ?? current.currentVersion,
+      latestVersion: summary?.version ?? current.latestVersion,
+      availableUpdate: summary,
+      error: null,
+      ...extra,
+    }));
+  };
+  const resetDownloadedUpdate = () => {
+    setUpdateState((current) => ({
+      ...current,
+      downloadedVersion: null,
+      downloadedBytes: 0,
+      contentLength: null,
+    }));
+  };
+  const runUpdateCheck = async () => {
+    setUpdateState((current) => ({ ...current, status: "checking", error: null }));
+    const result = await checkForAppUpdate();
+    pendingUpdateRef.current = result;
+    if (!result) {
+      resetDownloadedUpdate();
+      setUpdateState((current) => ({
+        ...current,
+        status: "up-to-date",
+        latestVersion: current.currentVersion,
+        availableUpdate: null,
+        error: null,
+      }));
+      return null;
+    }
+    resetDownloadedUpdate();
+    setUpdateSummary("available", result.summary);
+    return result;
+  };
+  const runUpdateDownload = async (result = pendingUpdateRef.current) => {
+    if (!result) {
+      const next = await runUpdateCheck();
+      if (!next) return null;
+      result = next;
+    }
+    setUpdateSummary("downloading", result.summary, {
+      downloadedVersion: null,
+      downloadedBytes: 0,
+      contentLength: null,
+    });
+    await downloadAppUpdate(result.update, (event) => {
+      if (event.event === "Started") {
+        setUpdateState((current) => ({
+          ...current,
+          contentLength: event.data.contentLength ?? null,
+          downloadedBytes: 0,
+        }));
+      }
+      if (event.event === "Progress") {
+        setUpdateState((current) => ({
+          ...current,
+          downloadedBytes: current.downloadedBytes + event.data.chunkLength,
+        }));
+      }
+    });
+    setUpdateSummary("downloaded", result.summary, {
+      downloadedVersion: result.summary.version,
+    });
+    notifyUpdated(t("updateDownloaded"));
+    return result;
+  };
+  const runUpdateInstall = async () => {
+    const result = pendingUpdateRef.current;
+    if (!result || updateState.status !== "downloaded") return;
+    await installAppUpdate(result.update);
   };
 
   useEffect(() => {
@@ -62,8 +155,14 @@ export function useAppModel() {
       .then(setAutostart)
       .catch(() => setAutostart(false));
     void readAppVersion()
-      .then(setVersion)
-      .catch(() => setVersion("0.1.0"));
+      .then((next) => {
+        setVersion(next);
+        setUpdateState((current) => ({ ...current, currentVersion: next }));
+      })
+      .catch(() => {
+        setVersion("0.1.0");
+        setUpdateState((current) => ({ ...current, currentVersion: "0.1.0" }));
+      });
     void readAppSettings()
       .then((next) => {
         setSettings(next);
@@ -93,6 +192,20 @@ export function useAppModel() {
       void unlistenState.then((fn) => fn());
       void unlistenShortcut.then((fn) => fn());
     };
+  }, []);
+
+  useEffect(() => {
+    void runUpdateCheck()
+      .then((result) => (result ? runUpdateDownload(result) : null))
+      .catch((error) => {
+        const fallback = t("updateCheckFailed");
+        const message = error instanceof Error ? error.message : fallback;
+        setUpdateState((current) => ({
+          ...current,
+          status: "error",
+          error: message || fallback,
+        }));
+      });
   }, []);
 
   useEffect(() => {
@@ -182,6 +295,40 @@ export function useAppModel() {
       notifyUpdated(message || fallback);
     }
   };
+  const checkForUpdates = async () => {
+    try {
+      const result = await runUpdateCheck();
+      if (!result) notifyUpdated(t("updateLatest"));
+      return result;
+    } catch (error) {
+      const fallback = t("updateCheckFailed");
+      const message = error instanceof Error ? error.message : fallback;
+      setUpdateState((current) => ({ ...current, status: "error", error: message || fallback }));
+      notifyUpdated(message || fallback);
+      return null;
+    }
+  };
+  const downloadLatestUpdate = async () => {
+    try {
+      const result = await runUpdateDownload();
+      if (!result) notifyUpdated(t("updateLatest"));
+    } catch (error) {
+      const fallback = t("updateDownloadFailed");
+      const message = error instanceof Error ? error.message : fallback;
+      setUpdateState((current) => ({ ...current, status: "error", error: message || fallback }));
+      notifyUpdated(message || fallback);
+    }
+  };
+  const installLatestUpdate = async () => {
+    try {
+      await runUpdateInstall();
+    } catch (error) {
+      const fallback = t("updateInstallFailed");
+      const message = error instanceof Error ? error.message : fallback;
+      setUpdateState((current) => ({ ...current, status: "error", error: message || fallback }));
+      notifyUpdated(message || fallback);
+    }
+  };
 
   return {
     state,
@@ -190,6 +337,7 @@ export function useAppModel() {
     lastText,
     autostart,
     version,
+    updateState,
     locale,
     settings,
     toastOpen,
@@ -197,6 +345,9 @@ export function useAppModel() {
     setNumber,
     setLocaleOverride: persistLocaleOverride,
     setAppTheme,
+    checkForUpdates,
+    downloadLatestUpdate,
+    installLatestUpdate,
     setGlobalShortcut,
     setGlobalShortcutEnabled,
     refreshState: () => readKeycastState().then(setState),

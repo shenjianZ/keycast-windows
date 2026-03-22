@@ -41,6 +41,9 @@ jobs:
         env:
           TAURI_BUNDLE_NSIS: "true"
           TAURI_BUNDLE_MSI: "true"
+          KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY: ${{ secrets.KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.KEYCAST_WINDOWS_TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.KEYCAST_WINDOWS_TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
 
       - name: Rename Windows NSIS
         shell: pwsh
@@ -50,6 +53,19 @@ jobs:
             Rename-Item -Path $file.Name -NewName ("{0}_{1}-windows-x86_64-setup.exe" -f $env:APP_NAME, $env:GITHUB_REF_NAME)
           }
 
+      - name: Rename Windows updater artifacts
+        shell: pwsh
+        run: |
+          cd src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis
+          $zip = Get-ChildItem *.zip | Select-Object -First 1
+          if ($null -eq $zip) { throw "Updater zip not found" }
+          $newZip = "{0}_{1}-windows-x86_64-updater.zip" -f $env:APP_NAME, $env:GITHUB_REF_NAME
+          Rename-Item -Path $zip.Name -NewName $newZip
+          $sigPath = "{0}.sig" -f $zip.Name
+          if (Test-Path $sigPath) {
+            Rename-Item -Path $sigPath -NewName ("{0}.sig" -f $newZip)
+          }
+
       - name: Rename Windows MSI
         shell: pwsh
         run: |
@@ -57,6 +73,26 @@ jobs:
           foreach ($file in Get-ChildItem *.msi) {
             Rename-Item -Path $file.Name -NewName ("{0}_{1}-windows-x86_64.msi" -f $env:APP_NAME, $env:GITHUB_REF_NAME)
           }
+
+      - name: Build updater manifest
+        shell: pwsh
+        run: |
+          cd src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis
+          $zip = Get-ChildItem *-updater.zip | Select-Object -First 1
+          $signature = Get-Content ("{0}.sig" -f $zip.Name) -Raw
+          $version = $env:GITHUB_REF_NAME.TrimStart("v")
+          $manifest = @{
+            version = $version
+            notes = "See GitHub release notes."
+            pub_date = (Get-Date).ToUniversalTime().ToString("o")
+            platforms = @{
+              "windows-x86_64" = @{
+                signature = $signature.Trim()
+                url = "https://github.com/$env:GITHUB_REPOSITORY/releases/download/$env:GITHUB_REF_NAME/$($zip.Name)"
+              }
+            }
+          } | ConvertTo-Json -Depth 5
+          Set-Content -Path latest.json -Value $manifest
 
       - name: Upload Windows NSIS artifacts
         uses: actions/upload-artifact@v4
@@ -72,6 +108,16 @@ jobs:
           path: src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/*.msi
           retention-days: 30
 
+      - name: Upload updater artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: keycast-windows-${{ github.ref_name }}-updater
+          path: |
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*-updater.zip
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*-updater.zip.sig
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/latest.json
+          retention-days: 30
+
       - name: Create or Update Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
@@ -81,6 +127,9 @@ jobs:
           generate_release_notes: true
           files: |
             src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*.exe
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*-updater.zip
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*-updater.zip.sig
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/latest.json
             src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/*.msi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

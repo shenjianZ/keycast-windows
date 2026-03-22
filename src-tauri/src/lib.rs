@@ -19,6 +19,7 @@ const HIDE_MENU_ID: &str = "hide";
 const TOGGLE_MENU_ID: &str = "toggle";
 const QUIT_MENU_ID: &str = "quit";
 const DEFAULT_SHORTCUT: &str = "Ctrl+Shift+K";
+const DEFAULT_UPDATER_PUBLIC_KEY: &str = "__KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY__";
 
 fn toggle_main_window<R: Runtime>(app: &AppHandle<R>) {
     let _ = WindowService::toggle_main_window(app);
@@ -73,6 +74,10 @@ pub(crate) fn sync_global_shortcut(
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let updater_pubkey = option_env!("KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY")
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .unwrap_or(DEFAULT_UPDATER_PUBLIC_KEY);
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_autostart::init(
@@ -80,6 +85,11 @@ pub fn run() {
             None,
         ))
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
+        .plugin(
+            tauri_plugin_updater::Builder::new()
+                .pubkey(updater_pubkey)
+                .build(),
+        )
         .on_window_event(|window, event| {
             if window.label() == "main" && matches!(event, WindowEvent::CloseRequested { .. }) {
                 if let WindowEvent::CloseRequested { api, .. } = event {
