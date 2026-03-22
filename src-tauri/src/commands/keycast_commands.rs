@@ -5,17 +5,26 @@ use crate::services::keycast_service::{
 };
 
 #[tauri::command]
-pub async fn start_keycast(app: AppHandle, runtime: State<'_, KeycastRuntime>) -> Result<(), String> {
+pub async fn start_keycast(
+    app: AppHandle,
+    runtime: State<'_, KeycastRuntime>,
+) -> Result<(), String> {
     KeycastService::start(&app, &runtime)
 }
 
 #[tauri::command]
-pub async fn stop_keycast(app: AppHandle, runtime: State<'_, KeycastRuntime>) -> Result<(), String> {
+pub async fn stop_keycast(
+    app: AppHandle,
+    runtime: State<'_, KeycastRuntime>,
+) -> Result<(), String> {
     KeycastService::stop(&app, &runtime)
 }
 
 #[tauri::command]
-pub async fn get_keycast_state(app: AppHandle, runtime: State<'_, KeycastRuntime>) -> Result<KeycastState, String> {
+pub async fn get_keycast_state(
+    app: AppHandle,
+    runtime: State<'_, KeycastRuntime>,
+) -> Result<KeycastState, String> {
     KeycastService::get_state(&app, &runtime)
 }
 
@@ -28,7 +37,10 @@ pub async fn get_keycast_overlay_config(
 }
 
 #[tauri::command]
-pub async fn prewarm_keycast_overlay(app: AppHandle, runtime: State<'_, KeycastRuntime>) -> Result<(), String> {
+pub async fn prewarm_keycast_overlay(
+    app: AppHandle,
+    runtime: State<'_, KeycastRuntime>,
+) -> Result<(), String> {
     KeycastService::prewarm_overlay_async(&app, &runtime)
 }
 

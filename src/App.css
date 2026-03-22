@@ -1,11 +1,11 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
   :root {
-    font-family: "Segoe UI Variable Text", "Segoe UI Variable",
-      "Microsoft YaHei UI", "Segoe UI", "Microsoft YaHei", sans-serif;
-    color: #111827;
-    background: #f7f7f5;
+    font-family:
+      "Segoe UI Variable Text", "Segoe UI Variable", "Microsoft YaHei UI", "Segoe UI",
+      "Microsoft YaHei", sans-serif;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -19,7 +19,18 @@
     margin: 0;
     overflow-x: hidden;
     min-height: 100vh;
+  }
+
+  html:not(.dark) body {
+    color: #111827;
     background: linear-gradient(180deg, #fbfbfa 0%, #f3f3f1 100%);
+  }
+
+  html.dark body {
+    color: #f5f5f5;
+    background:
+      radial-gradient(circle at top, rgba(40, 40, 48, 0.35), transparent 36%),
+      linear-gradient(180deg, #08090c 0%, #020202 100%);
   }
 
   #root {

@@ -109,7 +109,12 @@ fn default_keycast_accent_color() -> String {
 }
 
 impl KeySequenceTracker {
-    fn handle(&mut self, virtual_key: u16, is_down: bool, combo_window_ms: i64) -> Option<KeycastDisplayPayload> {
+    fn handle(
+        &mut self,
+        virtual_key: u16,
+        is_down: bool,
+        combo_window_ms: i64,
+    ) -> Option<KeycastDisplayPayload> {
         let now = Utc::now().timestamp_millis();
         let key = key_name(virtual_key)?;
         if is_modifier_key(&key) {
@@ -132,7 +137,12 @@ impl KeySequenceTracker {
         Some(build_payload(keys))
     }
 
-    fn handle_modifier_down(&mut self, key: String, now: i64, combo_window_ms: i64) -> Option<KeycastDisplayPayload> {
+    fn handle_modifier_down(
+        &mut self,
+        key: String,
+        now: i64,
+        combo_window_ms: i64,
+    ) -> Option<KeycastDisplayPayload> {
         if self.is_pending_stale(now, combo_window_ms) {
             self.pending_modifiers.clear();
             self.pending_started_at = None;
@@ -141,7 +151,8 @@ impl KeySequenceTracker {
             return None;
         }
         self.pending_modifiers.push(key);
-        self.pending_modifiers.sort_by_key(|item| modifier_rank(item));
+        self.pending_modifiers
+            .sort_by_key(|item| modifier_rank(item));
         self.pending_started_at.get_or_insert(now);
         None
     }
@@ -222,15 +233,27 @@ fn key_name(virtual_key: u16) -> Option<String> {
         0xA4 | 0xA5 => Some("Alt".to_string()),
         0x70..=0x87 => Some(format!("F{}", virtual_key - 0x6F)),
         0x60..=0x69 => Some(format!("Num{}", virtual_key - 0x60)),
-        0x30..=0x39 | 0x41..=0x5A => char::from_u32(u32::from(virtual_key)).map(|ch| ch.to_string()),
+        0x30..=0x39 | 0x41..=0x5A => {
+            char::from_u32(u32::from(virtual_key)).map(|ch| ch.to_string())
+        }
         _ => None,
     }
 }
 
 impl KeycastService {
+    fn emit_state(app: &AppHandle, runtime: &KeycastRuntime) {
+        if let Ok(state) = Self::get_state(app, runtime) {
+            let _ = app.emit("keycast:state-updated", state);
+        }
+    }
+
     pub fn initialize(app: &AppHandle, runtime: &KeycastRuntime) -> Result<(), String> {
-        let config = Self::normalize_overlay_config(Self::load_overlay_config(app).unwrap_or_default());
-        let mut current = runtime.overlay_config.lock().map_err(|_| "初始化按键屏显配置失败".to_string())?;
+        let config =
+            Self::normalize_overlay_config(Self::load_overlay_config(app).unwrap_or_default());
+        let mut current = runtime
+            .overlay_config
+            .lock()
+            .map_err(|_| "初始化按键屏显配置失败".to_string())?;
         *current = config;
         Ok(())
     }
@@ -246,7 +269,10 @@ impl KeycastService {
         })
     }
 
-    pub fn get_overlay_config(_app: &AppHandle, runtime: &KeycastRuntime) -> Result<KeycastOverlayConfig, String> {
+    pub fn get_overlay_config(
+        _app: &AppHandle,
+        runtime: &KeycastRuntime,
+    ) -> Result<KeycastOverlayConfig, String> {
         runtime
             .overlay_config
             .lock()
@@ -272,7 +298,10 @@ impl KeycastService {
         next: KeycastOverlayConfig,
     ) -> Result<KeycastOverlayConfig, String> {
         let next = Self::normalize_overlay_config(next);
-        let mut config = runtime.overlay_config.lock().map_err(|_| "更新按键屏显配置失败".to_string())?;
+        let mut config = runtime
+            .overlay_config
+            .lock()
+            .map_err(|_| "更新按键屏显配置失败".to_string())?;
         *config = next.clone();
         drop(config);
         Self::save_overlay_config(app, &next)?;
@@ -298,6 +327,7 @@ impl KeycastService {
             *guard = Some(worker);
         }
         runtime.is_listening.store(true, Ordering::SeqCst);
+        Self::emit_state(app, runtime);
         Ok(())
     }
 
@@ -313,6 +343,7 @@ impl KeycastService {
             }
         }
         runtime.is_listening.store(false, Ordering::SeqCst);
+        Self::emit_state(app, runtime);
         Self::hide_overlay(app)
     }
 
@@ -322,7 +353,11 @@ impl KeycastService {
             let mut tracker = KeySequenceTracker::default();
             let mut pressed = [false; 256];
             while !stop_flag.load(Ordering::SeqCst) {
-                let combo_window_ms = runtime.overlay_config.lock().map(|config| config.combo_window_ms).unwrap_or(DEFAULT_COMBO_WINDOW_MS);
+                let combo_window_ms = runtime
+                    .overlay_config
+                    .lock()
+                    .map(|config| config.combo_window_ms)
+                    .unwrap_or(DEFAULT_COMBO_WINDOW_MS);
                 for vk in 1_u16..=254_u16 {
                     let is_down = is_virtual_key_down(vk);
                     let slot = &mut pressed[vk as usize];
@@ -376,7 +411,9 @@ impl KeycastService {
 
     fn hide_overlay(app: &AppHandle) -> Result<(), String> {
         if let Some(window) = app.get_webview_window(KEYCAST_LABEL) {
-            window.hide().map_err(|e| format!("隐藏按键屏显窗口失败: {}", e))?;
+            window
+                .hide()
+                .map_err(|e| format!("隐藏按键屏显窗口失败: {}", e))?;
         }
         Ok(())
     }
@@ -407,13 +444,15 @@ impl KeycastService {
         if !path.exists() {
             return Ok(KeycastOverlayConfig::default());
         }
-        let content = fs::read_to_string(&path).map_err(|e| format!("读取按键屏显配置失败: {}", e))?;
+        let content =
+            fs::read_to_string(&path).map_err(|e| format!("读取按键屏显配置失败: {}", e))?;
         serde_json::from_str(&content).map_err(|e| format!("解析按键屏显配置失败: {}", e))
     }
 
     fn save_overlay_config(app: &AppHandle, config: &KeycastOverlayConfig) -> Result<(), String> {
         let path = Self::overlay_config_path(app)?;
-        let content = serde_json::to_string_pretty(config).map_err(|e| format!("序列化按键屏显配置失败: {}", e))?;
+        let content = serde_json::to_string_pretty(config)
+            .map_err(|e| format!("序列化按键屏显配置失败: {}", e))?;
         fs::write(path, content).map_err(|e| format!("保存按键屏显配置失败: {}", e))
     }
 
