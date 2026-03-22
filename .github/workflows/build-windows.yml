@@ -1,0 +1,86 @@
+name: Build Windows
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  APP_NAME: KeycastWindows
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Windows bundles
+        run: pnpm tauri build --target x86_64-pc-windows-msvc
+        env:
+          TAURI_BUNDLE_NSIS: "true"
+          TAURI_BUNDLE_MSI: "true"
+
+      - name: Rename Windows NSIS
+        shell: pwsh
+        run: |
+          cd src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis
+          foreach ($file in Get-ChildItem *.exe) {
+            Rename-Item -Path $file.Name -NewName ("{0}_{1}-windows-x86_64-setup.exe" -f $env:APP_NAME, $env:GITHUB_REF_NAME)
+          }
+
+      - name: Rename Windows MSI
+        shell: pwsh
+        run: |
+          cd src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi
+          foreach ($file in Get-ChildItem *.msi) {
+            Rename-Item -Path $file.Name -NewName ("{0}_{1}-windows-x86_64.msi" -f $env:APP_NAME, $env:GITHUB_REF_NAME)
+          }
+
+      - name: Upload Windows NSIS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: keycast-windows-${{ github.ref_name }}-nsis
+          path: src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*.exe
+          retention-days: 30
+
+      - name: Upload Windows MSI artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: keycast-windows-${{ github.ref_name }}-msi
+          path: src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/*.msi
+          retention-days: 30
+
+      - name: Create or Update Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Keycast Windows ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*.exe
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/*.msi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

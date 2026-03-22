@@ -5,7 +5,7 @@ import { SettingsPageV2 } from "./pages/SettingsPageV2";
 import { I18nContext, createTranslator, resolveLabel } from "./i18n";
 import { useAppModel } from "./use-app-model";
 
-const navClass = ({ isActive }: { isActive: boolean }) => `flex items-center rounded-2xl px-4 py-2.5 text-sm ${isActive ? "bg-stone-100 text-slate-900" : "text-slate-600 hover:bg-stone-50"}`;
+const navClass = ({ isActive }: { isActive: boolean }) => `flex items-center rounded-2xl px-4 py-3 text-[15px] font-medium ${isActive ? "bg-stone-100 text-slate-900" : "text-slate-700 hover:bg-stone-50"}`;
 
 export default function AppShell() {
   const app = useAppModel();
@@ -15,9 +15,9 @@ export default function AppShell() {
   return (
     <I18nContext.Provider value={{ locale, localeOverride: app.settings.locale_override, setLocaleOverride: app.setLocaleOverride, t }}>
       <HashRouter>
-        <div className="grid min-h-screen min-w-0 grid-cols-[176px_1fr] overflow-x-hidden">
-          <aside className="border-r border-slate-200/70 bg-white/50 px-2 py-5">
-            <div className="px-3 pb-4 text-[28px] font-extrabold tracking-[-0.04em] text-slate-900">{t("appName")}</div>
+        <div className="grid min-h-screen min-w-0 grid-cols-[150px_1fr] overflow-x-hidden">
+          <aside className="border-r border-slate-200/80 bg-[#fafafa] px-2 py-5">
+            <div className="px-4 pb-5 text-[17px] font-semibold text-slate-900">{t("appName")}</div>
             <nav className="grid gap-1 px-1">
               <NavLink to="/settings" className={navClass}>{t("navSettings")}</NavLink>
               <NavLink to="/about" className={navClass}>{t("navAbout")}</NavLink>
