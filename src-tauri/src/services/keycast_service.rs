@@ -93,19 +93,19 @@ fn default_combo_window_ms() -> i64 {
 }
 
 fn default_keycast_theme() -> String {
-    "keycaps-dark".to_string()
+    "text-only".to_string()
 }
 
 fn default_keycast_text_color() -> String {
-    "#ffffff".to_string()
+    "#111827".to_string()
 }
 
 fn default_keycast_accent_visible() -> bool {
-    false
+    true
 }
 
 fn default_keycast_accent_color() -> String {
-    "#38bdf8".to_string()
+    "#fb923c".to_string()
 }
 
 impl KeySequenceTracker {
