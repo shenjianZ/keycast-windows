@@ -11,6 +11,8 @@ const files = [
   ["package.json", [[/"version":\s*"[^"]+"/, `"version": "${version}"`]]],
   ["src-tauri/tauri.conf.json", [[/"version":\s*"[^"]+"/, `"version": "${version}"`]]],
   ["src-tauri/Cargo.toml", [[/^version = "[^"]+"/m, `version = "${version}"`]]],
+  ["docs/public/config/site.yaml", [[/version: "v[^"]+"/, `version: "v${version}"`]]],
+  ["docs/public/config/site.en.yaml", [[/version: "v[^"]+"/, `version: "v${version}"`]]],
   [
     "src/use-app-model.ts",
     [
