@@ -19,6 +19,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Validate release version
+        shell: pwsh
+        run: |
+          $tagVersion = $env:GITHUB_REF_NAME.TrimStart("v")
+          $packageVersion = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          $tauriVersion = (Get-Content src-tauri/tauri.conf.json -Raw | ConvertFrom-Json).version
+          $cargoVersion = (Select-String -Path src-tauri/Cargo.toml -Pattern '^version = "([^"]+)"$').Matches[0].Groups[1].Value
+          if ($packageVersion -ne $tagVersion) { throw "package.json version $packageVersion != tag $tagVersion" }
+          if ($tauriVersion -ne $tagVersion) { throw "tauri.conf.json version $tauriVersion != tag $tagVersion" }
+          if ($cargoVersion -ne $tagVersion) { throw "Cargo.toml version $cargoVersion != tag $tagVersion" }
+
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
