@@ -1,5 +1,5 @@
 name = "keycast-windows"
-account_id = env("CF_ACCOUNT_ID")
+account_id = ""
 compatibility_date = "2026-03-23"
 workers_dev = true
 
