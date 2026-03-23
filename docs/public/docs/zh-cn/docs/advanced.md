@@ -11,4 +11,4 @@ date: 2026-03-23
 
 ## 章节目录
 
-- [显示模式详解](display-modes.md)
+- [显示模式详解](docs/advanced/display-modes)

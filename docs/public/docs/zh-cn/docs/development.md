@@ -11,10 +11,10 @@ date: 2026-03-23
 
 ## 章节目录
 
-- [项目介绍](docs/introduction)
-- [技术栈](docs/tech-stack)
-- [项目结构](docs/project-structure)
-- [开发环境](docs/development-environment)
-- [本地运行](docs/local-development)
-- [构建打包](docs/building)
-- [贡献指南](docs/contributing)
+- [项目介绍](docs/development/introduction)
+- [技术栈](docs/development/tech-stack)
+- [项目结构](docs/development/project-structure)
+- [开发环境](docs/development/development-environment)
+- [本地运行](docs/development/local-development)
+- [构建打包](docs/development/building)
+- [贡献指南](docs/development/contributing)

@@ -24,7 +24,30 @@ const DEFAULT_UPDATER_PUBLIC_KEY: &str = "__KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC
 const MAIN_WINDOW_F12_DEVTOOLS_SCRIPT: &str = r#"
 if (!window.__KEYCAST_F12_DEVTOOLS_BOUND__) {
   window.__KEYCAST_F12_DEVTOOLS_BOUND__ = true;
+  window.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  });
   window.addEventListener("keydown", (event) => {
+    const blockedCtrlKeys = ["f", "p", "r", "0", "+", "-", "="];
+    if (event.ctrlKey && !event.altKey && !event.metaKey) {
+      const key = typeof event.key === "string" ? event.key.toLowerCase() : "";
+      if (event.shiftKey && (key === "i" || key === "j" || key === "c")) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      if (blockedCtrlKeys.includes(key)) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+    }
+    if (event.code === "F3" || event.code === "F5" || event.code === "F7") {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
     if (event.code === "F12") {
       event.preventDefault();
       window.__TAURI_INTERNALS__.invoke("plugin:webview|internal_toggle_devtools");

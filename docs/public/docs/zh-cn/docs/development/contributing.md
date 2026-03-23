@@ -138,24 +138,9 @@ git push origin feature/your-feature-name
 
 ### 联系方式
 
-查看项目 README 中的联系方式。
+Email: `15202078626@163.com`
 
-## 行为准则
 
-### 尊重他人
-
-- 保持友好和包容
-- 尊重不同观点
-- 建设性反馈
-
-### 协作精神
-
-- 愿意学习
-- 分享知识
-- 帮助他人
-
-<Callout variant="primary">
 **感谢你的贡献！**
 
 每一个贡献都让 Keycast Windows 变得更好。
-</Callout>

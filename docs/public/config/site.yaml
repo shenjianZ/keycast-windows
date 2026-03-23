@@ -65,22 +65,6 @@ sidebar:
           children:
             - title: "显示模式详解"
               path: "/docs/advanced/display-modes"
-            - title: "仅组合键模式"
-              path: "/docs/advanced/combo-only"
-            - title: "仅单个按键模式"
-              path: "/docs/advanced/single-only"
-            - title: "组合键优先模式"
-              path: "/docs/advanced/combo-precedence"
-            - title: "所有按键连续模式"
-              path: "/docs/advanced/all-sequential"
-            - title: "所有按键队列模式"
-              path: "/docs/advanced/all-sequential-persistent"
-            - title: "智能混合模式"
-              path: "/docs/advanced/smart-mixed"
-            - title: "主题系统"
-              path: "/docs/advanced/theme-system"
-            - title: "高级配置"
-              path: "/docs/advanced/advanced-config"
 
         # 开发指南部分
         - title: "开发指南"

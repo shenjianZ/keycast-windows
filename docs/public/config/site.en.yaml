@@ -222,14 +222,7 @@ fonts:
 codeHighlight:
   langs:
     - "bash"
-    - "markdown"
-    - "yaml"
-    - "javascript"
-    - "jsx"
-    - "json"
-    - "tsx"
-    - "typescript"
-    - "rust"
+    - "powershell"
   lightTheme: "github-light"
   darkTheme: "github-dark"
 

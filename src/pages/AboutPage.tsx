@@ -1,4 +1,4 @@
-import { Book, Bug, Github, Globe, MessageSquare } from "lucide-react";
+import { Book, Bug, Github, Globe, MessageSquare, User } from "lucide-react";
 import { useI18n } from "../i18n";
 import type { UpdateState } from "../lib/types";
 
@@ -46,6 +46,10 @@ export function AboutPage({ version, updateState }: Props) {
           <div className="text-[18px] font-semibold text-slate-900 dark:text-slate-100">
             Keycast Windows
           </div>
+          <div className="flex items-center gap-2 text-[13px] text-slate-500 dark:text-slate-400">
+            <User className="h-3.5 w-3.5" />
+            <span>by shenjianZ</span>
+          </div>
           <div className="flex items-center gap-3">
             <span className="text-[14px] leading-none text-slate-500 dark:text-slate-400">
               v{version}
@@ -73,7 +77,7 @@ export function AboutPage({ version, updateState }: Props) {
               rel="noreferrer"
               className="flex items-center gap-4 text-[16px] text-slate-700 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
             >
-              <Icon className="h-5 w-5 text-current" />
+              <Icon className="h-5 w-5 text-slate-900 dark:text-slate-100" />
               <span>{locale === "zh-CN" ? item.labelZh : item.labelEn}</span>
             </a>
           );
