@@ -4,7 +4,7 @@ import type { UpdateState } from "../lib/types";
 
 type Props = { version: string; updateState: UpdateState };
 const repoUrl = "https://github.com/shenjianZ/keycast-windows";
-const docsUrl = "https://shenjianz.github.io/keycast-windows/";
+const docsUrl = "https://keycast-windows.shenjianzlt.workers.dev/";
 
 const links = [
   { key: "home", labelZh: "主页", labelEn: "Homepage", icon: Globe, href: repoUrl },

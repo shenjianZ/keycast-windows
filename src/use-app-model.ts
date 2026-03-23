@@ -28,7 +28,7 @@ import type {
 export function useAppModel() {
   const [updateState, setUpdateState] = useState<UpdateState>({
     status: "idle",
-    currentVersion: "0.1.5",
+    currentVersion: "0.1.6",
     latestVersion: null,
     downloadedVersion: null,
     contentLength: null,
@@ -43,7 +43,7 @@ export function useAppModel() {
   const [config, setConfig] = useState<KeycastOverlayConfig>(initialOverlayConfig);
   const [lastText, setLastText] = useState("Ctrl + Shift + K");
   const [autostart, setAutostart] = useState(false);
-  const [version, setVersion] = useState("0.1.5");
+  const [version, setVersion] = useState("0.1.6");
   const [locale, setLocale] = useState<"zh-CN" | "en-US">("en-US");
   const [settings, setSettings] = useState<AppSettings>({
     locale_override: null,
@@ -165,8 +165,8 @@ export function useAppModel() {
         setUpdateState((current) => ({ ...current, currentVersion: next }));
       })
       .catch(() => {
-        setVersion("0.1.5");
-        setUpdateState((current) => ({ ...current, currentVersion: "0.1.5" }));
+        setVersion("0.1.6");
+        setUpdateState((current) => ({ ...current, currentVersion: "0.1.6" }));
       });
     void readAppSettings()
       .then((next) => {
