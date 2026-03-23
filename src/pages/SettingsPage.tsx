@@ -347,8 +347,16 @@ export function SettingsPage(props: Props) {
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1">
               <div className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
-                v{props.version}
-                {props.updateState.latestVersion ? ` -> v${props.updateState.latestVersion}` : ""}
+                {(() => {
+                  switch (props.updateState.status) {
+                    case "available":
+                    case "downloading":
+                    case "downloaded":
+                      return `v${props.version} -> v${props.updateState.latestVersion || props.version}`;
+                    default:
+                      return `v${props.version}`;
+                  }
+                })()}
               </div>
               <div className="text-sm text-slate-500 dark:text-zinc-500">{updateStatusText}</div>
               {props.updateState.status === "downloaded" ? (
