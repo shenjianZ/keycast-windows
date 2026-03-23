@@ -145,6 +145,9 @@ footer:
           link: "https://github.com/shenjianZ/keycast-windows/blob/master/LICENSE"
           external: true
   social:
+    - name: "email"
+      url: "mailto:15202078626@163.com"
+      icon: "mail"
     - name: "github"
       url: "https://github.com/shenjianZ/keycast-windows"
       icon: "github"

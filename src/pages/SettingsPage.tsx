@@ -82,6 +82,7 @@ type Props = {
   appTheme: AppTheme;
   version: string;
   updateState: UpdateState;
+  autoUpdateEnabled: boolean;
   globalShortcut: string;
   globalShortcutEnabled: boolean;
   updateConfig: (updater: React.SetStateAction<KeycastOverlayConfig>, message: string) => void;
@@ -90,6 +91,7 @@ type Props = {
   toggleAutostart: () => Promise<void>;
   setLocaleOverride: (next: LocaleOverride) => Promise<void>;
   setAppTheme: (theme: AppTheme) => Promise<void>;
+  setAutoUpdateEnabled: (enabled: boolean) => Promise<void>;
   checkForUpdates: () => Promise<unknown>;
   downloadLatestUpdate: () => Promise<void>;
   installLatestUpdate: () => Promise<void>;
@@ -434,6 +436,13 @@ export function SettingsPage(props: Props) {
       </SettingsGroup>
       <SettingsGroup title={t("updateSection")}>
         <div className="space-y-3 px-4 py-4">
+          <SettingsRow
+            title={t("autoUpdateEnabled")}
+            description={t("autoUpdateEnabledDesc")}
+            enabled={props.autoUpdateEnabled}
+            onEnabledChange={(checked) => void props.setAutoUpdateEnabled(checked)}
+            className="rounded-2xl border border-slate-200/80 dark:border-zinc-900"
+          />
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1">
               <div className="text-sm font-semibold text-slate-900 dark:text-zinc-100">

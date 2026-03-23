@@ -48,6 +48,7 @@ export type AppSettings = {
   locale_override: LocaleOverride;
   listen_on_startup: boolean;
   theme: AppTheme;
+  auto_update_enabled: boolean;
   global_shortcut: string;
   global_shortcut_enabled: boolean;
 };

@@ -15,6 +15,8 @@ pub struct AppSettings {
     pub listen_on_startup: bool,
     #[serde(default)]
     pub theme: String,
+    #[serde(default = "default_auto_update_enabled")]
+    pub auto_update_enabled: bool,
     #[serde(default = "default_global_shortcut")]
     pub global_shortcut: String,
     #[serde(default = "default_global_shortcut_enabled")]
@@ -27,6 +29,7 @@ impl Default for AppSettings {
             locale_override: None,
             listen_on_startup: true,
             theme: "light".to_string(),
+            auto_update_enabled: default_auto_update_enabled(),
             global_shortcut: default_global_shortcut(),
             global_shortcut_enabled: default_global_shortcut_enabled(),
         }
@@ -35,6 +38,10 @@ impl Default for AppSettings {
 
 fn default_global_shortcut() -> String {
     "Ctrl+Shift+K".to_string()
+}
+
+fn default_auto_update_enabled() -> bool {
+    true
 }
 
 fn default_global_shortcut_enabled() -> bool {
@@ -82,6 +89,7 @@ impl AppSettingsService {
                 .map(Self::normalize_locale),
             listen_on_startup: settings.listen_on_startup,
             theme: Self::normalize_theme(&settings.theme),
+            auto_update_enabled: settings.auto_update_enabled,
             global_shortcut: Self::normalize_global_shortcut(&settings.global_shortcut),
             global_shortcut_enabled: settings.global_shortcut_enabled,
         };

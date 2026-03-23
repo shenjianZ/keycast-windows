@@ -12,7 +12,9 @@
       "Bash(\"D:\\\\VScodeProject\\\\keycast-windows\\\\docs\\\\public\\\\docs\\\\en\\\\getting-started\\\\installation.md\":*)",
       "Bash(\"D:\\\\VScodeProject\\\\keycast-windows\\\\docs\\\\public\\\\docs\\\\zh-cn\\\\user-guide\\\\overview.md\":*)",
       "Bash(\"D:\\\\VScodeProject\\\\keycast-windows\\\\docs\\\\public\\\\docs\\\\zh-cn\\\\user-guide\\\\display-modes.md\":*)",
-      "Bash(\"D:\\\\VScodeProject\\\\keycast-windows\\\\docs\\\\public\\\\docs\\\\zh-cn\\\\development\\\\introduction.md\":*)"
+      "Bash(\"D:\\\\VScodeProject\\\\keycast-windows\\\\docs\\\\public\\\\docs\\\\zh-cn\\\\development\\\\introduction.md\":*)",
+      "Bash(wc -l /d/VScodeProject/keycast-windows/docs/public/docs/zh-cn/**/*.md)",
+      "Bash(find /d/VScodeProject/keycast-windows/docs/public/docs/zh-cn -name *.md -exec wc -w {} +)"
     ]
   }
 }

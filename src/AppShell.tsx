@@ -12,6 +12,10 @@ export default function AppShell() {
   const app = useAppModel();
   const locale = resolveLabel(app.settings.locale_override, app.locale);
   const t = createTranslator(locale);
+  const hasPendingUpdate =
+    app.updateState.status === "available" ||
+    app.updateState.status === "downloading" ||
+    app.updateState.status === "downloaded";
 
   return (
     <I18nContext.Provider
@@ -25,8 +29,15 @@ export default function AppShell() {
       <HashRouter>
         <div className="grid min-h-screen min-w-0 grid-cols-[150px_1fr] overflow-x-hidden">
           <aside className="border-r border-slate-200/80 bg-[#fafafa] px-2 py-5 dark:border-zinc-900 dark:bg-[#050505]">
-            <div className="px-4 pb-5 text-[17px] font-semibold text-slate-900 dark:text-zinc-100">
-              {t("appName")}
+            <div className="flex items-center gap-2 px-4 pb-5 text-[17px] font-semibold text-slate-900 dark:text-zinc-100">
+              <span>{t("appName")}</span>
+              {hasPendingUpdate ? (
+                <span
+                  className="h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-rose-100 dark:ring-rose-950"
+                  aria-label={t("updateBadgeLabel")}
+                  title={t("updateBadgeLabel")}
+                />
+              ) : null}
             </div>
             <nav className="grid gap-1 px-1">
               <NavLink to="/settings" className={navClass}>
@@ -52,6 +63,7 @@ export default function AppShell() {
                     appTheme={app.settings.theme}
                     version={app.version}
                     updateState={app.updateState}
+                    autoUpdateEnabled={app.settings.auto_update_enabled}
                     globalShortcut={app.settings.global_shortcut}
                     globalShortcutEnabled={app.settings.global_shortcut_enabled}
                     updateConfig={app.updateConfig}
@@ -60,6 +72,7 @@ export default function AppShell() {
                     toggleAutostart={app.toggleAutostart}
                     setLocaleOverride={app.setLocaleOverride}
                     setAppTheme={app.setAppTheme}
+                    setAutoUpdateEnabled={app.setAutoUpdateEnabled}
                     checkForUpdates={app.checkForUpdates}
                     downloadLatestUpdate={app.downloadLatestUpdate}
                     installLatestUpdate={app.installLatestUpdate}

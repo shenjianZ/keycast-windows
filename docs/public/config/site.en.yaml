@@ -16,12 +16,8 @@ navbar:
     - title: "Home"
       link: "/"
       active: true
-    - title: "User Guide"
-      link: "/docs/user-guide/overview"
-    - title: "Advanced"
-      link: "/docs/advanced/display-modes"
-    - title: "Development"
-      link: "/docs/development/introduction"
+    - title: "Docs"
+      link: "/docs"
   actions:
     - type: "github"
       link: "https://github.com/shenjianZ/keycast-windows"
@@ -54,7 +50,7 @@ sidebar:
               path: "/docs/user-guide/display-modes"
             - title: "Themes"
               path: "/docs/user-guide/themes"
-            - title: "Position"
+            - title: "Position Settings"
               path: "/docs/user-guide/position"
             - title: "Shortcuts"
               path: "/docs/user-guide/shortcuts"
@@ -63,30 +59,14 @@ sidebar:
             - title: "Updates"
               path: "/docs/user-guide/updates"
 
-        # Advanced Section
+        # Advanced Features Section
         - title: "Advanced"
           path: "/docs/advanced"
           children:
             - title: "Display Modes Explained"
               path: "/docs/advanced/display-modes"
-            - title: "Combos Only Mode"
-              path: "/docs/advanced/combo-only"
-            - title: "Single Keys Only Mode"
-              path: "/docs/advanced/single-only"
-            - title: "Combo Precedence Mode"
-              path: "/docs/advanced/combo-precedence"
-            - title: "All Sequential Mode"
-              path: "/docs/advanced/all-sequential"
-            - title: "All Sequential Queue Mode"
-              path: "/docs/advanced/all-sequential-persistent"
-            - title: "Smart Mixed Mode"
-              path: "/docs/advanced/smart-mixed"
-            - title: "Theme System"
-              path: "/docs/advanced/theme-system"
-            - title: "Advanced Configuration"
-              path: "/docs/advanced/advanced-config"
 
-        # Development Section
+        # Development Guide Section
         - title: "Development"
           path: "/docs/development"
           children:
@@ -116,22 +96,22 @@ toc:
   enabled: true
   title: "On This Page"
 
-# Image viewer configuration
+# Image Viewer Configuration
 imageViewer:
   enabled: true
   labels:
-    preview: "Preview image"
-    zoomIn: "Zoom in"
-    zoomOut: "Zoom out"
-    fit: "Fit to viewport"
-    actualSize: "Actual size"
+    preview: "Preview Image"
+    zoomIn: "Zoom In"
+    zoomOut: "Zoom Out"
+    fit: "Fit to Window"
+    actualSize: "Actual Size"
     reset: "Reset"
-    rotateLeft: "Rotate left"
-    rotateRight: "Rotate right"
+    rotateLeft: "Rotate Left"
+    rotateRight: "Rotate Right"
     fullscreen: "Fullscreen"
     download: "Download"
-    openInNewTab: "Open in new tab"
-    close: "Close image viewer"
+    openInNewTab: "Open in New Tab"
+    close: "Close Image Viewer"
 
 # Footer Configuration
 footer:
@@ -148,10 +128,10 @@ footer:
         - title: "GitHub Discussions"
           link: "https://github.com/shenjianZ/keycast-windows/discussions"
           external: true
-        - title: "Issues"
+        - title: "Issue Tracker"
           link: "https://github.com/shenjianZ/keycast-windows/issues"
           external: true
-        - title: "Releases"
+        - title: "Release Notes"
           link: "https://github.com/shenjianZ/keycast-windows/releases"
           external: true
     - title: "Related Links"
@@ -165,6 +145,9 @@ footer:
           link: "https://github.com/shenjianZ/keycast-windows/blob/master/LICENSE"
           external: true
   social:
+    - name: "email"
+      url: "mailto:15202078626@163.com"
+      icon: "mail"
     - name: "github"
       url: "https://github.com/shenjianZ/keycast-windows"
       icon: "github"
@@ -174,7 +157,7 @@ pwa:
   enabled: true
   name: "Keycast Windows"
   shortName: "Keycast"
-  description: "Windows desktop keystroke overlay tool"
+  description: "Desktop keystroke overlay tool for Windows"
   themeColor: "#ffffff"
   backgroundColor: "#ffffff"
 
@@ -207,7 +190,7 @@ mdx:
 ai:
   enabled: false
 
-# Fonts Configuration
+# Font Configuration
 fonts:
   fontFamilyZhCn: "MiSans, PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif"
   fontFamilyEn: "Fragment Mono, system-ui, sans-serif"
@@ -218,7 +201,7 @@ fonts:
     - "MiSans-Medium.woff2"
     - "MiSans-Regular.woff2"
 
-# Code highlight configuration
+# Code Highlight Configuration
 codeHighlight:
   langs:
     - "bash"
@@ -233,7 +216,6 @@ search:
   maxResults: 20
   snippetLength: 120
 
-# Export Configuration
 export:
   enabled: true
   markdown: true

@@ -49,12 +49,15 @@ export function useAppModel() {
     locale_override: null,
     listen_on_startup: false,
     theme: "light",
+    auto_update_enabled: true,
     global_shortcut: "Ctrl+Shift+K",
     global_shortcut_enabled: true,
   });
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const hasLoadedConfig = useRef(false);
+  const hasLoadedSettings = useRef(false);
+  const hasRunStartupUpdateCheck = useRef(false);
   const hasShownToast = useRef(false);
   const persistedConfig = useRef<string | null>(null);
   const localeRef = useRef(locale);
@@ -168,10 +171,14 @@ export function useAppModel() {
     void readAppSettings()
       .then((next) => {
         setSettings(next);
+        hasLoadedSettings.current = true;
         return syncSystemLocale(navigator.language);
       })
       .then((next) => setLocale(next === "zh-CN" ? "zh-CN" : "en-US"))
-      .catch(() => setLocale("en-US"));
+      .catch(() => {
+        hasLoadedSettings.current = true;
+        setLocale("en-US");
+      });
     const unlistenDisplay = listen<{ text: string }>(
       "keycast:display",
       (event) => event.payload?.text && setLastText(event.payload.text)
@@ -197,6 +204,14 @@ export function useAppModel() {
   }, []);
 
   useEffect(() => {
+    if (
+      !hasLoadedSettings.current ||
+      !settings.auto_update_enabled ||
+      hasRunStartupUpdateCheck.current
+    ) {
+      return;
+    }
+    hasRunStartupUpdateCheck.current = true;
     void runUpdateCheck()
       .then((result) => (result ? runUpdateDownload(result) : null))
       .catch((error) => {
@@ -208,7 +223,7 @@ export function useAppModel() {
           error: message || fallback,
         }));
       });
-  }, []);
+  }, [settings.auto_update_enabled]);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -282,6 +297,15 @@ export function useAppModel() {
     const nextSettings = await saveAppSettings({ ...settings, theme });
     setSettings(nextSettings);
     notifyUpdated(t("themeUpdated"));
+  };
+
+  const setAutoUpdateEnabled = async (autoUpdateEnabled: boolean) => {
+    const nextSettings = await saveAppSettings({
+      ...settings,
+      auto_update_enabled: autoUpdateEnabled,
+    });
+    setSettings(nextSettings);
+    notifyUpdated(t("autoUpdateUpdated"));
   };
 
   const setGlobalShortcut = async (globalShortcut: string) => {
@@ -365,6 +389,7 @@ export function useAppModel() {
     setNumber,
     setLocaleOverride: persistLocaleOverride,
     setAppTheme,
+    setAutoUpdateEnabled,
     checkForUpdates,
     downloadLatestUpdate,
     installLatestUpdate,
