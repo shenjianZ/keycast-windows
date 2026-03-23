@@ -21,6 +21,17 @@ const QUIT_MENU_ID: &str = "quit";
 const DEFAULT_SHORTCUT: &str = "Ctrl+Shift+K";
 const AUTOSTART_ARG: &str = "--from-autostart";
 const DEFAULT_UPDATER_PUBLIC_KEY: &str = "__KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY__";
+const MAIN_WINDOW_F12_DEVTOOLS_SCRIPT: &str = r#"
+if (!window.__KEYCAST_F12_DEVTOOLS_BOUND__) {
+  window.__KEYCAST_F12_DEVTOOLS_BOUND__ = true;
+  window.addEventListener("keydown", (event) => {
+    if (event.code === "F12") {
+      event.preventDefault();
+      window.__TAURI_INTERNALS__.invoke("plugin:webview|internal_toggle_devtools");
+    }
+  });
+}
+"#;
 
 fn toggle_main_window<R: Runtime>(app: &AppHandle<R>) {
     let _ = WindowService::toggle_main_window(app);
@@ -95,6 +106,11 @@ pub fn run() {
                 .pubkey(updater_pubkey)
                 .build(),
         )
+        .on_page_load(|webview, _payload| {
+            if webview.label() == "main" {
+                let _ = webview.eval(MAIN_WINDOW_F12_DEVTOOLS_SCRIPT);
+            }
+        })
         .on_window_event(|window, event| {
             if window.label() == "main" && matches!(event, WindowEvent::CloseRequested { .. }) {
                 if let WindowEvent::CloseRequested { api, .. } = event {

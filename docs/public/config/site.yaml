@@ -1,300 +1,240 @@
 # 网站基本配置
 site:
-    title: "React Docs UI 示例项目"
-    description: "基于 React Docs UI 构建的文档网站示例"
-    # logo支持以下格式：
-    # 1. emoji: "🤖"
-    # 2. 图片URL: "https://example.com/logo.png"
-    # 3. 本地图片: "/images/logo.png"
-    # 4. 相对路径: "./assets/logo.svg"
-    logo:
-        light: "/images/favicon.svg"
-        dark: "/images/favicon-dark.svg"
-    author: "React Docs UI Team"
+  title: "Keycast Windows 文档"
+  description: "Windows 桌面按键屏显工具官方文档 - 为录屏、直播、演示和教学提供清晰的按键反馈"
+  logo:
+    light: "/images/favicon.svg"
+    dark: "/images/favicon-dark.svg"
+  author: "Keycast Team"
 
 # 顶部导航配置
 navbar:
-    showLogo: true
-    showTitle: true
-    showLanguageSwitcher: true
-    items:
-        - title: "首页"
-          link: "/"
-          active: true
-        - title: "文档"
-          link: "/docs"
-    actions:
-        - type: "github"
-          link: "https://github.com/shenjianZ/React-docs-ui"
-          enabled: true
-        # 支持常见代码托管/外链平台，也支持按 icon/type 自定义
-        # 可选 icon/type 示例：github、gitee、gitea、gitlab、link、external、globe
-        - type: "gitee"
-          link: "https://gitee.com/your-org/your-repo"
-          enabled: false
-        - type: "gitea"
-          link: "https://git.example.com/your-org/your-repo"
-          enabled: false
-        - title: "API"
-          icon: "link"
-          link: "https://example.com/api"
-          enabled: false
+  showLogo: true
+  showTitle: true
+  showLanguageSwitcher: true
+  items:
+    - title: "首页"
+      link: "/"
+      active: true
+    - title: "文档"
+      link: "/docs"
+  actions:
+    - type: "github"
+      link: "https://github.com/shenjianZ/keycast-windows"
+      enabled: true
 
 # 侧边栏导航配置
 sidebar:
-    enabled: true
-    collections:
-        docs:
-            sections:
-                - title: "快速开始"
-                  path: "/docs/guide"
-                  children:
-                      - title: "介绍"
-                        path: "/docs/guide/introduction"
-                      - title: "安装"
-                        path: "/docs/guide/installation"
-                      - title: "快速上手"
-                        path: "/docs/guide/quick-start"
-                      - title: "配置说明"
-                        path: "/docs/guide/configuration"
-                      - title: "PDF Server 部署"
-                        path: "/docs/guide/pdf-server"
-                - title: "文档测试"
-                  path: "/docs/test"
-                  children:
-                      - title: "MD测试"
-                        path: "/docs/test/test"
-                      - title: "katex测试"
-                        path: "/docs/test/katex-test"
-                      - title: "MDX 演示"
-                        path: "/docs/test/mdx-test"
-                      - title: "Frontmatter测试"
-                        path: "/docs/test/frontmatter-test"
+  enabled: true
+  collections:
+    docs:
+      sections:
+        # 快速开始部分
+        - title: "快速开始"
+          path: "/docs/getting-started"
+          children:
+            - title: "下载安装"
+              path: "/docs/getting-started/installation"
+            - title: "基础使用"
+              path: "/docs/getting-started/basic-usage"
+            - title: "配置入门"
+              path: "/docs/getting-started/configuration"
+
+        # 用户指南部分
+        - title: "用户指南"
+          path: "/docs/user-guide"
+          children:
+            - title: "功能概览"
+              path: "/docs/user-guide/overview"
+            - title: "显示模式"
+              path: "/docs/user-guide/display-modes"
+            - title: "主题配置"
+              path: "/docs/user-guide/themes"
+            - title: "位置调整"
+              path: "/docs/user-guide/position"
+            - title: "快捷键设置"
+              path: "/docs/user-guide/shortcuts"
+            - title: "系统设置"
+              path: "/docs/user-guide/system-settings"
+            - title: "更新管理"
+              path: "/docs/user-guide/updates"
+
+        # 高级功能部分
+        - title: "高级功能"
+          path: "/docs/advanced"
+          children:
+            - title: "显示模式详解"
+              path: "/docs/advanced/display-modes"
+            - title: "仅组合键模式"
+              path: "/docs/advanced/combo-only"
+            - title: "仅单个按键模式"
+              path: "/docs/advanced/single-only"
+            - title: "组合键优先模式"
+              path: "/docs/advanced/combo-precedence"
+            - title: "所有按键连续模式"
+              path: "/docs/advanced/all-sequential"
+            - title: "所有按键队列模式"
+              path: "/docs/advanced/all-sequential-persistent"
+            - title: "智能混合模式"
+              path: "/docs/advanced/smart-mixed"
+            - title: "主题系统"
+              path: "/docs/advanced/theme-system"
+            - title: "高级配置"
+              path: "/docs/advanced/advanced-config"
+
+        # 开发指南部分
+        - title: "开发指南"
+          path: "/docs/development"
+          children:
+            - title: "项目介绍"
+              path: "/docs/development/introduction"
+            - title: "技术栈"
+              path: "/docs/development/tech-stack"
+            - title: "项目结构"
+              path: "/docs/development/project-structure"
+            - title: "开发环境"
+              path: "/docs/development/development-environment"
+            - title: "本地运行"
+              path: "/docs/development/local-development"
+            - title: "构建打包"
+              path: "/docs/development/building"
+            - title: "贡献指南"
+              path: "/docs/development/contributing"
 
 # Theme Configuration
 theme:
-    # Default theme mode: 'light' | 'dark' | 'auto'
-    # light: Force light mode
-    # dark: Force dark mode
-    # auto: Follow system preference (default)
-    defaultMode: "auto"
-
-    # Allow users to toggle theme (show theme toggle button)
-    allowToggle: true
+  defaultMode: "auto"
+  allowToggle: true
 
 # Table of Contents Configuration
 toc:
-    # Maximum heading level to display in TOC (1-6)
-    maxLevel: 4
-
-    # Enable table of contents
-    enabled: true
-
-    # TOC title
-    title: "本页目录"
+  maxLevel: 4
+  enabled: true
+  title: "本页目录"
 
 # 图片查看器配置
 imageViewer:
-    enabled: true
-    labels:
-        preview: "预览图片"
-        zoomIn: "放大"
-        zoomOut: "缩小"
-        fit: "适配窗口"
-        actualSize: "原始比例"
-        reset: "重置"
-        rotateLeft: "左旋"
-        rotateRight: "右旋"
-        fullscreen: "全屏"
-        download: "下载"
-        openInNewTab: "新标签打开"
-        close: "关闭图片查看器"
+  enabled: true
+  labels:
+    preview: "预览图片"
+    zoomIn: "放大"
+    zoomOut: "缩小"
+    fit: "适配窗口"
+    actualSize: "原始比例"
+    reset: "重置"
+    rotateLeft: "左旋"
+    rotateRight: "右旋"
+    fullscreen: "全屏"
+    download: "下载"
+    openInNewTab: "新标签打开"
+    close: "关闭图片查看器"
 
 # Footer Configuration
 footer:
-    enabled: true
-    copyright: "© 2026 React Docs UI. All rights reserved."
-    repository:
-        url: "https://github.com/shenjianZ/React-docs-ui"
-        branch: "master"
-    lastUpdated: "2026-03-05"
-    version: "v0.4.0"
-    groups:
-        - title: "社区"
-          items:
-              - title: "讨论区"
-                link: "https://github.com/shenjianZ/React-docs-ui/discussions"
-                external: true
-              - title: "问题反馈"
-                link: "https://github.com/shenjianZ/React-docs-ui/issues"
-                external: true
-              - title: "贡献指南"
-                link: "https://github.com/shenjianZ/React-docs-ui/blob/master/CONTRIBUTING.md"
-                external: true
-              - title: "版本发布"
-                link: "https://github.com/shenjianZ/React-docs-ui/releases"
-                external: true
-        - title: "帮助支持"
-          items:
-              - title: "快速开始"
-                link: "/docs/guide"
-              - title: "源代码"
-                link: "https://github.com/shenjianZ/React-docs-ui"
-                external: true
-              - title: "开源许可"
-                link: "https://github.com/shenjianZ/React-docs-ui/blob/master/LICENSE"
-                external: true
-              - title: "回到顶部"
-                link: "#"
-                action: "scrollTop"
-    links:
-        - title: "Documentation"
-          link: "/guide/introduction"
-        - title: "GitHub"
-          link: "https://github.com/shenjianZ/React-docs-ui"
+  enabled: true
+  copyright: "© 2026 Keycast Windows. All rights reserved."
+  repository:
+    url: "https://github.com/shenjianZ/keycast-windows"
+    branch: "master"
+  lastUpdated: "2026-03-23"
+  version: "v0.1.4"
+  groups:
+    - title: "社区"
+      items:
+        - title: "GitHub Discussions"
+          link: "https://github.com/shenjianZ/keycast-windows/discussions"
           external: true
-        - title: "License"
-          link: "/license"
-    social:
-        - name: "email"
-          url: "mailto:contact@example.com"
-          icon: "mail"
-        - name: "github"
-          url: "https://github.com/your_github_id"
-          icon: "github"
-        # - name: "youtube"
-        #   url: "https://youtube.com/@yourhandle"
-        #   icon: "youtube"
-        # - name: "twitter"
-        #   url: "https://twitter.com/yourhandle"
-        #   icon: "twitter"
-        # - name: "discord"
-        #   url: "https://discord.gg/yourinvite"
-        #   icon: "discord"
-        # - name: "telegram"
-        #   url: "https://t.me/yourhandle"
-        #   icon: "telegram"
-        # - name: "tiktok"
-        #   url: "https://tiktok.com/@yourhandle"
-        #   icon: "tiktok"
-        - name: "bilibili"
-          url: "https://space.bilibili.com/your_bilibili_id"
-          icon: "bilibili"
-        - name: "qq"
-          url: "mqqapi://card/show_pslcard?src_type=internal&version=1&uin=your_qq_id&card_type=person&source=qrcode"
-          icon: "qq"
-        - name: "wechat"
-          url: "weixin://dl/add?your_wechat_id"
-          icon: "wechat"
-        # - name: "weibo"
-        #   url: "https://weibo.com/yourhandle"
-        #   icon: "weibo"
-        # - name: "douyin"
-        #   url: "https://www.douyin.com/user/yourhandle"
-        #   icon: "douyin"
-        # - name: "zhihu"
-        #   url: "https://www.zhihu.com/people/yourhandle"
-        #   icon: "zhihu"
+        - title: "问题反馈"
+          link: "https://github.com/shenjianZ/keycast-windows/issues"
+          external: true
+        - title: "更新日志"
+          link: "https://github.com/shenjianZ/keycast-windows/releases"
+          external: true
+    - title: "相关链接"
+      items:
+        - title: "快速开始"
+          link: "/docs/getting-started/installation"
+        - title: "源代码"
+          link: "https://github.com/shenjianZ/keycast-windows"
+          external: true
+        - title: "开源许可"
+          link: "https://github.com/shenjianZ/keycast-windows/blob/master/LICENSE"
+          external: true
+  social:
+    - name: "github"
+      url: "https://github.com/shenjianZ/keycast-windows"
+      icon: "github"
 
 # PWA Configuration
 pwa:
-    enabled: true
-    name: "React Docs UI"
-    shortName: "ReactDocsUI"
-    description: "Beautiful documentation websites made simple"
-    themeColor: "#ffffff"
-    backgroundColor: "#ffffff"
+  enabled: true
+  name: "Keycast Windows"
+  shortName: "Keycast"
+  description: "Windows 桌面按键屏显工具"
+  themeColor: "#ffffff"
+  backgroundColor: "#ffffff"
 
 # 右键菜单配置
 contextMenu:
-    # 全局开关，false 则完全禁用右键菜单
-    enabled: true
-
-    # 页面组菜单项配置
-    page:
-        copySelectedText: true # 复制选中的文字
-        copyUrl: true # 复制当前链接
-        copyTitle: false # 复制页面标题
-        copyMarkdownLink: false # 复制 Markdown 链接
-        openInNewTab: false # 在新标签页打开
-        reload: true # 刷新
-        printPage: true # 打印页面
-        scrollToTop: true # 回到顶部
-        scrollToBottom: true # 滚动到底部
-
-    # 站点组菜单项配置
-    site:
-        goHome: true # 返回首页
-        quickNav: false # 快速跳转
-        language: false # 语言切换
-
-    # 外观组菜单项配置
-    appearance:
-        theme: false # 主题切换
-        resetThemePref: false # 重置主题偏好
+  enabled: true
+  page:
+    copySelectedText: true
+    copyUrl: true
+    copyTitle: false
+    copyMarkdownLink: false
+    openInNewTab: false
+    reload: true
+    printPage: true
+    scrollToTop: true
+    scrollToBottom: true
+  site:
+    goHome: true
+    quickNav: false
+    language: false
+  appearance:
+    theme: false
+    resetThemePref: false
 
 # MDX 组件配置
 mdx:
-    componentsPath: "/src/components" # 组件扫描路径
-    enabled: true # 启用 MDX 支持
+  componentsPath: "/src/components"
+  enabled: true
 
 ai:
-    enabled: true
+  enabled: false
 
 # 字体配置
 fonts:
-    fontFamilyZhCn: "MiSans, PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif"
-    fontFamilyEn: "Fragment Mono, system-ui, sans-serif"
-    downloadFonts:
-        - "FragmentMono-Italic.woff2"
-        - "FragmentMono-Regular.woff2"
-        - "MiSans-Bold.woff2"
-        - "MiSans-Medium.woff2"
-        - "MiSans-Regular.woff2"
+  fontFamilyZhCn: "MiSans, PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif"
+  fontFamilyEn: "Fragment Mono, system-ui, sans-serif"
+  downloadFonts:
+    - "FragmentMono-Italic.woff2"
+    - "FragmentMono-Regular.woff2"
+    - "MiSans-Bold.woff2"
+    - "MiSans-Medium.woff2"
+    - "MiSans-Regular.woff2"
 
 # 代码高亮配置
 codeHighlight:
-    # 支持的常用语言/别名示例:
-    # bash, shell, sh
-    # javascript, js
-    # typescript, ts
-    # jsx, tsx
-    # json
-    # yaml, yml
-    # markdown, md
-    # html, css, scss, less
-    # python, py
-    # java, c, cpp, csharp, go, rust, ruby, php, swift, kotlin, sql
-    # vue, svelte, docker, dockerfile, nginx, xml, diff, regex
-    # 如需更多语言，可继续追加到 langs；名称需与 Shiki 语言名或这里的别名一致
-    # 仅预加载当前站点会用到的语言，未列出的代码块会回退为普通 code 显示
-    langs:
-        - "bash"
-        - "markdown"
-        - "yaml"
-        - "javascript"
-        - "jsx"
-        - "json"
-        - "tsx"
-        - "typescript"
-    lightTheme: "github-light"
-    darkTheme: "github-dark"
+  langs:
+    - "bash"
+    - "powershell"
+  lightTheme: "github-light"
+  darkTheme: "github-dark"
 
 # 全文搜索配置
 search:
-    enabled: true
-    placeholder: "搜索文档..."
-    maxResults: 20
-    snippetLength: 120
+  enabled: true
+  placeholder: "搜索文档..."
+  maxResults: 20
+  snippetLength: 120
 
 export:
-    enabled: true
-    markdown: true
-    pdf: true
-    word: true
-    allDocs: true
-    # PDF 服务器配置 (可选)
-    # 启用后将使用服务器端生成 PDF，否则使用浏览器原生打印
-    pdfServer:
-        enabled: false
-        url: "http://localhost:3001"
+  enabled: true
+  markdown: true
+  pdf: true
+  word: true
+  allDocs: true
+  pdfServer:
+    enabled: false
+    url: "http://localhost:3001"

@@ -1,12 +1,14 @@
-import { Bug, Github, Globe, MessageSquare } from "lucide-react";
+import { Book, Bug, Github, Globe, MessageSquare } from "lucide-react";
 import { useI18n } from "../i18n";
 import type { UpdateState } from "../lib/types";
 
 type Props = { version: string; updateState: UpdateState };
 const repoUrl = "https://github.com/shenjianZ/keycast-windows";
+const docsUrl = "https://shenjianz.github.io/keycast-windows/";
 
 const links = [
   { key: "home", labelZh: "主页", labelEn: "Homepage", icon: Globe, href: repoUrl },
+  { key: "docs", labelZh: "文档", labelEn: "Documentation", icon: Book, href: docsUrl },
   { key: "github", labelZh: "GitHub", labelEn: "GitHub", icon: Github, href: repoUrl },
   {
     key: "issue",

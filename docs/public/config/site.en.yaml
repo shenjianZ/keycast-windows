@@ -1,302 +1,252 @@
 # Website Configuration
 site:
-    title: "React Docs UI Example"
-    description: "Example documentation website built with React Docs UI"
-    # Logo formats supported:
-    # 1. emoji: "🤖"
-    # 2. image URL: "https://example.com/logo.png"
-    # 3. local image: "/images/logo.png"
-    # 4. relative path: "./assets/logo.svg"
-    logo:
-        light: "/images/favicon.svg"
-        dark: "/images/favicon-dark.svg"
-    author: "React Docs UI Team"
+  title: "Keycast Windows Documentation"
+  description: "Official documentation for Keycast Windows - A desktop keystroke overlay tool for Windows providing clear key feedback for recording, streaming, demos, and teaching"
+  logo:
+    light: "/images/favicon.svg"
+    dark: "/images/favicon-dark.svg"
+  author: "Keycast Team"
 
 # Navigation Bar Configuration
 navbar:
-    showLogo: true
-    showTitle: true
-    showLanguageSwitcher: true
-    items:
-        - title: "Home"
-          link: "/"
-          active: true
-        - title: "Document"
-          link: "/docs"
-    actions:
-        - type: "github"
-          link: "https://github.com/shenjianZ/React-docs-ui"
-          enabled: true
-        # Common code hosting / external links are supported out of the box.
-        # Available icon/type examples: github, gitee, gitea, gitlab, link, external, globe
-        - type: "gitee"
-          link: "https://gitee.com/your-org/your-repo"
-          enabled: false
-        - type: "gitea"
-          link: "https://git.example.com/your-org/your-repo"
-          enabled: false
-        - title: "API"
-          icon: "link"
-          link: "https://example.com/api"
-          enabled: false
+  showLogo: true
+  showTitle: true
+  showLanguageSwitcher: true
+  items:
+    - title: "Home"
+      link: "/"
+      active: true
+    - title: "User Guide"
+      link: "/docs/user-guide/overview"
+    - title: "Advanced"
+      link: "/docs/advanced/display-modes"
+    - title: "Development"
+      link: "/docs/development/introduction"
+  actions:
+    - type: "github"
+      link: "https://github.com/shenjianZ/keycast-windows"
+      enabled: true
 
 # Sidebar Navigation Configuration
 sidebar:
-    enabled: true
-    collections:
-        docs:
-            sections:
-                - title: "Getting Started"
-                  path: "/docs/guide"
-                  children:
-                      - title: "Introduction"
-                        path: "/docs/guide/introduction"
-                      - title: "Installation"
-                        path: "/docs/guide/installation"
-                      - title: "Quick Start"
-                        path: "/docs/guide/quick-start"
-                      - title: "Configuration"
-                        path: "/docs/guide/configuration"
-                      - title: "PDF Server Deployment"
-                        path: "/docs/guide/pdf-server"
-                - title: "Documentation Tests"
-                  path: "/docs/test"
-                  children:
-                      - title: "MD Test"
-                        path: "/docs/test/test"
-                      - title: "KaTeX Test"
-                        path: "/docs/test/katex-test"
-                      - title: "MDX Demo"
-                        path: "/docs/test/mdx-test"
-                      - title: "Frontmatter Test"
-                        path: "/docs/test/frontmatter-test"
+  enabled: true
+  collections:
+    docs:
+      sections:
+        # Getting Started Section
+        - title: "Getting Started"
+          path: "/docs/getting-started"
+          children:
+            - title: "Installation"
+              path: "/docs/getting-started/installation"
+            - title: "Basic Usage"
+              path: "/docs/getting-started/basic-usage"
+            - title: "Configuration Basics"
+              path: "/docs/getting-started/configuration"
+
+        # User Guide Section
+        - title: "User Guide"
+          path: "/docs/user-guide"
+          children:
+            - title: "Overview"
+              path: "/docs/user-guide/overview"
+            - title: "Display Modes"
+              path: "/docs/user-guide/display-modes"
+            - title: "Themes"
+              path: "/docs/user-guide/themes"
+            - title: "Position"
+              path: "/docs/user-guide/position"
+            - title: "Shortcuts"
+              path: "/docs/user-guide/shortcuts"
+            - title: "System Settings"
+              path: "/docs/user-guide/system-settings"
+            - title: "Updates"
+              path: "/docs/user-guide/updates"
+
+        # Advanced Section
+        - title: "Advanced"
+          path: "/docs/advanced"
+          children:
+            - title: "Display Modes Explained"
+              path: "/docs/advanced/display-modes"
+            - title: "Combos Only Mode"
+              path: "/docs/advanced/combo-only"
+            - title: "Single Keys Only Mode"
+              path: "/docs/advanced/single-only"
+            - title: "Combo Precedence Mode"
+              path: "/docs/advanced/combo-precedence"
+            - title: "All Sequential Mode"
+              path: "/docs/advanced/all-sequential"
+            - title: "All Sequential Queue Mode"
+              path: "/docs/advanced/all-sequential-persistent"
+            - title: "Smart Mixed Mode"
+              path: "/docs/advanced/smart-mixed"
+            - title: "Theme System"
+              path: "/docs/advanced/theme-system"
+            - title: "Advanced Configuration"
+              path: "/docs/advanced/advanced-config"
+
+        # Development Section
+        - title: "Development"
+          path: "/docs/development"
+          children:
+            - title: "Introduction"
+              path: "/docs/development/introduction"
+            - title: "Tech Stack"
+              path: "/docs/development/tech-stack"
+            - title: "Project Structure"
+              path: "/docs/development/project-structure"
+            - title: "Development Environment"
+              path: "/docs/development/development-environment"
+            - title: "Local Development"
+              path: "/docs/development/local-development"
+            - title: "Building"
+              path: "/docs/development/building"
+            - title: "Contributing"
+              path: "/docs/development/contributing"
 
 # Theme Configuration
 theme:
-    # Default theme mode: 'light' | 'dark' | 'auto'
-    # light: Force light mode
-    # dark: Force dark mode
-    # auto: Follow system preference (default)
-    defaultMode: "auto"
-
-    # Allow users to toggle theme (show theme toggle button)
-    allowToggle: true
+  defaultMode: "auto"
+  allowToggle: true
 
 # Table of Contents Configuration
 toc:
-    # Maximum heading level to display in TOC (1-6)
-    maxLevel: 4
-
-    # Enable table of contents
-    enabled: true
-
-    # TOC title
-    title: "On This Page"
+  maxLevel: 4
+  enabled: true
+  title: "On This Page"
 
 # Image viewer configuration
 imageViewer:
-    enabled: true
-    labels:
-        preview: "Preview image"
-        zoomIn: "Zoom in"
-        zoomOut: "Zoom out"
-        fit: "Fit to viewport"
-        actualSize: "Actual size"
-        reset: "Reset"
-        rotateLeft: "Rotate left"
-        rotateRight: "Rotate right"
-        fullscreen: "Fullscreen"
-        download: "Download"
-        openInNewTab: "Open in new tab"
-        close: "Close image viewer"
+  enabled: true
+  labels:
+    preview: "Preview image"
+    zoomIn: "Zoom in"
+    zoomOut: "Zoom out"
+    fit: "Fit to viewport"
+    actualSize: "Actual size"
+    reset: "Reset"
+    rotateLeft: "Rotate left"
+    rotateRight: "Rotate right"
+    fullscreen: "Fullscreen"
+    download: "Download"
+    openInNewTab: "Open in new tab"
+    close: "Close image viewer"
 
 # Footer Configuration
 footer:
-    enabled: true
-    copyright: "© 2025 React Docs UI. All rights reserved."
-    repository:
-        url: "https://github.com/shenjianZ/React-docs-ui"
-        branch: "master"
-    lastUpdated: "2026-03-05"
-    version: "v0.4.0"
-    groups:
-        - title: "Community"
-          items:
-              - title: "Discussions"
-                link: "https://github.com/shenjianZ/React-docs-ui/discussions"
-                external: true
-              - title: "Issues"
-                link: "https://github.com/shenjianZ/React-docs-ui/issues"
-                external: true
-              - title: "Contributing"
-                link: "https://github.com/shenjianZ/React-docs-ui/blob/master/CONTRIBUTING.md"
-                external: true
-              - title: "Releases"
-                link: "https://github.com/shenjianZ/React-docs-ui/releases"
-                external: true
-        - title: "Help & Support"
-          items:
-              - title: "quick-start"
-                link: "/docs/guide"
-              - title: "Source Code"
-                link: "https://github.com/shenjianZ/React-docs-ui"
-                external: true
-              - title: "License"
-                link: "https://github.com/shenjianZ/React-docs-ui/blob/master/LICENSE"
-                external: true
-              - title: "Back to Top"
-                link: "#"
-                action: "scrollTop"
-    links:
-        - title: "Documentation"
-          link: "/docs/guide/introduction"
-        - title: "GitHub"
-          link: "https://github.com/shenjianZ/React-docs-ui"
+  enabled: true
+  copyright: "© 2026 Keycast Windows. All rights reserved."
+  repository:
+    url: "https://github.com/shenjianZ/keycast-windows"
+    branch: "master"
+  lastUpdated: "2026-03-23"
+  version: "v0.1.4"
+  groups:
+    - title: "Community"
+      items:
+        - title: "GitHub Discussions"
+          link: "https://github.com/shenjianZ/keycast-windows/discussions"
+          external: true
+        - title: "Issues"
+          link: "https://github.com/shenjianZ/keycast-windows/issues"
+          external: true
+        - title: "Releases"
+          link: "https://github.com/shenjianZ/keycast-windows/releases"
+          external: true
+    - title: "Related Links"
+      items:
+        - title: "Getting Started"
+          link: "/docs/getting-started/installation"
+        - title: "Source Code"
+          link: "https://github.com/shenjianZ/keycast-windows"
           external: true
         - title: "License"
-          link: "https://github.com/shenjianZ/React-docs-ui/blob/master/LICENSE"
+          link: "https://github.com/shenjianZ/keycast-windows/blob/master/LICENSE"
           external: true
-    social:
-        - name: "email"
-          url: "mailto:contact@example.com"
-          icon: "mail"
-        - name: "github"
-          link: "https://github.com/shenjianZ/React-docs-ui"
-          icon: "github"
-        # - name: "youtube"
-        #   url: "https://youtube.com/@yourhandle"
-        #   icon: "youtube"
-        # - name: "twitter"
-        #   url: "https://twitter.com/yourhandle"
-        #   icon: "twitter"
-        # - name: "discord"
-        #   url: "https://discord.gg/yourinvite"
-        #   icon: "discord"
-        # - name: "telegram"
-        #   url: "https://t.me/yourhandle"
-        #   icon: "telegram"
-        # - name: "tiktok"
-        #   url: "https://tiktok.com/@yourhandle"
-        #   icon: "tiktok"
-        - name: "bilibili"
-          url: "https://space.bilibili.com/your_bilibili_id"
-          icon: "bilibili"
-        - name: "qq"
-          url: "mqqapi://card/show_pslcard?src_type=internal&version=1&uin=your_qq_id&card_type=person&source=qrcode"
-          icon: "qq"
-        - name: "wechat"
-          url: "weixin://dl/add?your_wechat_id"
-          icon: "wechat"
-        # - name: "weibo"
-        #   url: "https://weibo.com/yourhandle"
-        #   icon: "weibo"
-        # - name: "douyin"
-        #   url: "https://www.douyin.com/user/yourhandle"
-        #   icon: "douyin"
-        # - name: "zhihu"
-        #   url: "https://www.zhihu.com/people/yourhandle"
-        #   icon: "zhihu"
+  social:
+    - name: "github"
+      url: "https://github.com/shenjianZ/keycast-windows"
+      icon: "github"
 
 # PWA Configuration
 pwa:
-    enabled: true
-    name: "React Docs UI"
-    shortName: "ReactDocsUI"
-    description: "Beautiful documentation websites made simple"
-    themeColor: "#ffffff"
-    backgroundColor: "#ffffff"
+  enabled: true
+  name: "Keycast Windows"
+  shortName: "Keycast"
+  description: "Windows desktop keystroke overlay tool"
+  themeColor: "#ffffff"
+  backgroundColor: "#ffffff"
 
 # Context Menu Configuration
 contextMenu:
-    # Global switch, set to false to completely disable context menu
-    enabled: true
-
-    # Page group menu items configuration
-    page:
-        copySelectedText: true # Copy selected text
-        copyUrl: true # Copy current URL
-        copyTitle: false # Copy page title
-        copyMarkdownLink: false # Copy Markdown link
-        openInNewTab: false # Open in new tab
-        reload: true # Refresh
-        printPage: true # Print page
-        scrollToTop: true # Scroll to top
-        scrollToBottom: true # Scroll to bottom
-
-    # Site group menu items configuration
-    site:
-        goHome: true # Go to home
-        quickNav: false # Quick navigation
-        language: false # Language switch
-
-    # Appearance group menu items configuration
-    appearance:
-        theme: false # Theme switch
-        resetThemePref: false # Reset theme preference
+  enabled: true
+  page:
+    copySelectedText: true
+    copyUrl: true
+    copyTitle: false
+    copyMarkdownLink: false
+    openInNewTab: false
+    reload: true
+    printPage: true
+    scrollToTop: true
+    scrollToBottom: true
+  site:
+    goHome: true
+    quickNav: false
+    language: false
+  appearance:
+    theme: false
+    resetThemePref: false
 
 # MDX Component Configuration
 mdx:
-    componentsPath: "/src/components" # Component scan path
-    enabled: true # Enable MDX support
+  componentsPath: "/src/components"
+  enabled: true
 
 ai:
-    enabled: true
+  enabled: false
 
 # Fonts Configuration
 fonts:
-    fontFamilyZhCn: "MiSans, PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif"
-    fontFamilyEn: "Fragment Mono, system-ui, sans-serif"
-    downloadFonts:
-        - "FragmentMono-Italic.woff2"
-        - "FragmentMono-Regular.woff2"
-        - "MiSans-Bold.woff2"
-        - "MiSans-Medium.woff2"
-        - "MiSans-Regular.woff2"
+  fontFamilyZhCn: "MiSans, PingFang SC, Noto Sans SC, Microsoft YaHei, sans-serif"
+  fontFamilyEn: "Fragment Mono, system-ui, sans-serif"
+  downloadFonts:
+    - "FragmentMono-Italic.woff2"
+    - "FragmentMono-Regular.woff2"
+    - "MiSans-Bold.woff2"
+    - "MiSans-Medium.woff2"
+    - "MiSans-Regular.woff2"
 
 # Code highlight configuration
 codeHighlight:
-    # Common supported languages / aliases:
-    # bash, shell, sh
-    # javascript, js
-    # typescript, ts
-    # jsx, tsx
-    # json
-    # yaml, yml
-    # markdown, md
-    # html, css, scss, less
-    # python, py
-    # java, c, cpp, csharp, go, rust, ruby, php, swift, kotlin, sql
-    # vue, svelte, docker, dockerfile, nginx, xml, diff, regex
-    # Add more items to langs when needed; names should match Shiki language ids or these aliases.
-    # Preload only the languages used by this site. Unlisted fences fall back to plain code.
-    langs:
-        - "bash"
-        - "markdown"
-        - "yaml"
-        - "javascript"
-        - "jsx"
-        - "json"
-        - "tsx"
-        - "typescript"
-    lightTheme: "github-light"
-    darkTheme: "github-dark"
+  langs:
+    - "bash"
+    - "markdown"
+    - "yaml"
+    - "javascript"
+    - "jsx"
+    - "json"
+    - "tsx"
+    - "typescript"
+    - "rust"
+  lightTheme: "github-light"
+  darkTheme: "github-dark"
 
 # Full-text Search Configuration
 search:
-    enabled: true
-    placeholder: "Search docs..."
-    maxResults: 20
-    snippetLength: 120
+  enabled: true
+  placeholder: "Search docs..."
+  maxResults: 20
+  snippetLength: 120
 
 # Export Configuration
 export:
-    enabled: true
-    markdown: true
-    pdf: true
-    word: true
-    allDocs: true
-    # PDF Server Configuration (optional)
-    # When enabled, PDF will be generated server-side, otherwise use browser native print
-    pdfServer:
-        enabled: false
-        url: "http://localhost:3001"
+  enabled: true
+  markdown: true
+  pdf: true
+  word: true
+  allDocs: true
+  pdfServer:
+    enabled: false
+    url: "http://localhost:3001"

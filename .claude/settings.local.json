@@ -4,7 +4,15 @@
       "Bash(cargo fmt:*)",
       "Bash(pnpm prettier:*)",
       "Bash(pnpm add:*)",
-      "Bash(pnpm:*)"
+      "Bash(pnpm:*)",
+      "Bash(\"D:\\\\VScodeProject\\\\keycast-windows\\\\docs\\\\public\\\\docs\\\\zh-cn\\\\index.md\":*)",
+      "Bash(\"D:\\\\VScodeProject\\\\keycast-windows\\\\docs\\\\public\\\\docs\\\\zh-cn\\\\getting-started\\\\installation.md\":*)",
+      "Bash(\"D:\\\\VScodeProject\\\\keycast-windows\\\\docs\\\\public\\\\docs\\\\zh-cn\\\\getting-started\\\\basic-usage.md\":*)",
+      "Bash(\"D:\\\\VScodeProject\\\\keycast-windows\\\\docs\\\\public\\\\docs\\\\zh-cn\\\\getting-started\\\\configuration.md\":*)",
+      "Bash(\"D:\\\\VScodeProject\\\\keycast-windows\\\\docs\\\\public\\\\docs\\\\en\\\\getting-started\\\\installation.md\":*)",
+      "Bash(\"D:\\\\VScodeProject\\\\keycast-windows\\\\docs\\\\public\\\\docs\\\\zh-cn\\\\user-guide\\\\overview.md\":*)",
+      "Bash(\"D:\\\\VScodeProject\\\\keycast-windows\\\\docs\\\\public\\\\docs\\\\zh-cn\\\\user-guide\\\\display-modes.md\":*)",
+      "Bash(\"D:\\\\VScodeProject\\\\keycast-windows\\\\docs\\\\public\\\\docs\\\\zh-cn\\\\development\\\\introduction.md\":*)"
     ]
   }
 }
