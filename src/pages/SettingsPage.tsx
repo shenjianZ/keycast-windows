@@ -85,7 +85,7 @@ type Props = {
   globalShortcut: string;
   globalShortcutEnabled: boolean;
   updateConfig: (updater: React.SetStateAction<KeycastOverlayConfig>, message: string) => void;
-  setNumber: (key: "x" | "y" | "combo_window_ms", value: string) => void;
+  setNumber: (key: "x" | "y" | "combo_window_ms" | "max_consecutive_keys" | "consecutive_window_ms" | "queue_idle_timeout_ms", value: string) => void;
   toggleListening: () => Promise<void>;
   toggleAutostart: () => Promise<void>;
   setLocaleOverride: (next: LocaleOverride) => Promise<void>;
@@ -331,6 +331,96 @@ export function SettingsPage(props: Props) {
               value={props.config.combo_window_ms}
               onChange={(e) => props.setNumber("combo_window_ms", e.target.value)}
             />
+          }
+        />
+      </SettingsGroup>
+      <SettingsGroup title={t("displayModeSection")}>
+        <SettingsRow
+          title={t("displayMode")}
+          description={t("displayModeDesc")}
+          control={
+            <Select value={props.config.display_mode} onValueChange={(value) => props.updateConfig((current) => ({ ...current, display_mode: value as any }), toastText(t("displayMode")))}>
+              <SelectTrigger className="w-[220px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="combo-only">{t("displayModeComboOnly")}</SelectItem>
+                <SelectItem value="single-only">{t("displayModeSingleOnly")}</SelectItem>
+                <SelectItem value="combo-precedence">{t("displayModeComboPrecedence")}</SelectItem>
+                <SelectItem value="all-sequential">{t("displayModeAllSequential")}</SelectItem>
+                <SelectItem value="all-sequential-persistent">{t("displayModeAllSequentialPersistent")}</SelectItem>
+                <SelectItem value="smart-mixed">{t("displayModeSmartMixed")}</SelectItem>
+              </SelectContent>
+            </Select>
+          }
+        />
+        <SettingsRow
+          title={t("maxConsecutiveKeys")}
+          description={t("maxConsecutiveKeysDesc")}
+          control={
+            <Input
+              className="w-[220px]"
+              type="number"
+              min={3}
+              max={20}
+              value={props.config.max_consecutive_keys}
+              onChange={(e) => props.updateConfig((current) => ({ ...current, max_consecutive_keys: Math.max(3, Math.min(20, parseInt(e.target.value) || 5)) }), toastText(t("maxConsecutiveKeys")))}
+            />
+          }
+        />
+        <SettingsRow
+          title={t("consecutiveWindow")}
+          description={t("consecutiveWindowDesc")}
+          control={
+            <Input
+              className="w-[220px]"
+              type="number"
+              min={200}
+              max={800}
+              value={props.config.consecutive_window_ms}
+              onChange={(e) => props.updateConfig((current) => ({ ...current, consecutive_window_ms: Math.max(200, Math.min(800, parseInt(e.target.value) || 400)) }), toastText(t("consecutiveWindow")))}
+            />
+          }
+        />
+        <SettingsRow
+          title={t("queueIdleTimeout")}
+          description={t("queueIdleTimeoutDesc")}
+          control={
+            <Input
+              className="w-[220px]"
+              type="number"
+              min={200}
+              max={5000}
+              value={props.config.queue_idle_timeout_ms}
+              onChange={(e) => props.updateConfig((current) => ({ ...current, queue_idle_timeout_ms: Math.max(200, Math.min(5000, parseInt(e.target.value) || 400)) }), toastText(t("queueIdleTimeout")))}
+            />
+          }
+        />
+        <SettingsRow
+          title={t("showKeyCount")}
+          description={t("showKeyCountDesc")}
+          enabled={props.config.show_key_count}
+          onEnabledChange={(checked) =>
+            props.updateConfig(
+              (current) => ({ ...current, show_key_count: checked }),
+              toastText(t("showKeyCount"))
+            )
+          }
+        />
+        <SettingsRow
+          title={t("scrollDirection")}
+          description={t("scrollDirectionDesc")}
+          control={
+            <Select value={props.config.scroll_direction} onValueChange={(value) => props.updateConfig((current) => ({ ...current, scroll_direction: value as any }), toastText(t("scrollDirection")))}>
+              <SelectTrigger className="w-[220px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="horizontal">{t("scrollDirectionHorizontal")}</SelectItem>
+                <SelectItem value="vertical">{t("scrollDirectionVertical")}</SelectItem>
+                <SelectItem value="fade">{t("scrollDirectionFade")}</SelectItem>
+              </SelectContent>
+            </Select>
           }
         />
       </SettingsGroup>

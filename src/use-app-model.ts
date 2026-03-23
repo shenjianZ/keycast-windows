@@ -56,6 +56,7 @@ export function useAppModel() {
   const [toastMessage, setToastMessage] = useState("");
   const hasLoadedConfig = useRef(false);
   const hasShownToast = useRef(false);
+  const persistedConfig = useRef<string | null>(null);
   const localeRef = useRef(locale);
   const pendingConfigMessage = useRef("设置已更新");
   const pendingUpdateRef = useRef<Awaited<ReturnType<typeof checkForAppUpdate>> | null>(null);
@@ -149,6 +150,7 @@ export function useAppModel() {
     void readKeycastState().then(setState);
     void readOverlayConfig().then((next) => {
       setConfig(next);
+      persistedConfig.current = JSON.stringify(next);
       hasLoadedConfig.current = true;
     });
     void readAutostart()
@@ -223,14 +225,32 @@ export function useAppModel() {
 
   useEffect(() => {
     if (!hasLoadedConfig.current) return;
+    const snapshot = JSON.stringify(config);
+    if (snapshot === persistedConfig.current) return;
     const timer = window.setTimeout(() => {
-      void saveOverlayConfig(config).then(() => {
-        if (!hasShownToast.current) {
-          hasShownToast.current = true;
-          return;
-        }
-        notifyUpdated(pendingConfigMessage.current);
-      });
+      void saveOverlayConfig(config)
+        .then((saved) => {
+          const savedSnapshot = JSON.stringify(saved);
+          persistedConfig.current = savedSnapshot;
+          if (savedSnapshot !== snapshot) {
+            setConfig(saved);
+          }
+          if (!hasShownToast.current) {
+            hasShownToast.current = true;
+            return;
+          }
+          notifyUpdated(pendingConfigMessage.current);
+        })
+        .catch(async (error) => {
+          const restored = await readOverlayConfig().catch(() => null);
+          if (restored) {
+            persistedConfig.current = JSON.stringify(restored);
+            setConfig(restored);
+          }
+          const fallback = "保存按键屏显配置失败";
+          const message = error instanceof Error ? error.message : fallback;
+          notifyUpdated(message || fallback);
+        });
     }, 250);
     return () => window.clearTimeout(timer);
   }, [config]);
@@ -254,7 +274,7 @@ export function useAppModel() {
     setConfig(updater);
   };
 
-  const setNumber = (key: "x" | "y" | "combo_window_ms", value: string) => {
+  const setNumber = (key: "x" | "y" | "combo_window_ms" | "max_consecutive_keys" | "consecutive_window_ms" | "queue_idle_timeout_ms", value: string) => {
     setConfig((current) => ({ ...current, [key]: Number(value) || 0 }));
   };
 
@@ -354,9 +374,6 @@ export function useAppModel() {
     toggleListening: async () => {
       const nextState = await toggleKeycast(state.is_listening);
       setState(nextState);
-      setSettings(
-        await saveAppSettings({ ...settings, listen_on_startup: nextState.is_listening })
-      );
       notifyUpdated(t("listeningUpdated"));
     },
     toggleAutostart: async () => {

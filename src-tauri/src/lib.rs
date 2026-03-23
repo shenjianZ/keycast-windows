@@ -19,6 +19,7 @@ const HIDE_MENU_ID: &str = "hide";
 const TOGGLE_MENU_ID: &str = "toggle";
 const QUIT_MENU_ID: &str = "quit";
 const DEFAULT_SHORTCUT: &str = "Ctrl+Shift+K";
+const AUTOSTART_ARG: &str = "--from-autostart";
 const DEFAULT_UPDATER_PUBLIC_KEY: &str = "__KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY__";
 
 fn toggle_main_window<R: Runtime>(app: &AppHandle<R>) {
@@ -29,6 +30,10 @@ fn show_main_window<R: Runtime>(app: &AppHandle<R>) {
 }
 fn hide_main_window<R: Runtime>(app: &AppHandle<R>) {
     let _ = WindowService::hide_main_window_to_tray(app);
+}
+
+fn is_launched_from_autostart() -> bool {
+    std::env::args().any(|arg| arg == AUTOSTART_ARG)
 }
 
 fn toggle_keycast_listening(app: &AppHandle) {
@@ -82,7 +87,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
-            None,
+            Some(vec![AUTOSTART_ARG]),
         ))
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(
@@ -99,6 +104,7 @@ pub fn run() {
             }
         })
         .setup(|app| {
+            let launched_from_autostart = is_launched_from_autostart();
             let app_settings =
                 AppSettingsService::initialize(app.handle()).map_err(std::io::Error::other)?;
             let restore_listening = app_settings
@@ -171,7 +177,9 @@ pub fn run() {
                 let runtime = app.state::<KeycastRuntime>();
                 let _ = KeycastService::start(app.handle(), &runtime);
             }
-            let _ = WindowService::show_main_window(app.handle());
+            if !launched_from_autostart {
+                let _ = WindowService::show_main_window(app.handle());
+            }
             if let Err(err) = sync_global_shortcut(
                 app.handle(),
                 shortcut_enabled,

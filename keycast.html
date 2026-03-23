@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>按键屏显</title>
     <style>
-      html,body{margin:0;background:transparent;overflow:hidden}body{display:inline-block;padding:28px;pointer-events:none;font-family:"Segoe UI","Microsoft YaHei",sans-serif;--fg:#fff;--text-color:var(--fg);--accent:#38bdf8;--card-bg:transparent;--card-border:transparent;--card-shadow:none;--card-blur:0px;--text-shadow:none;--accent-shadow:none;--token-bg:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.08));--token-line:rgba(255,255,255,.1);--token-fg:var(--text-color);--token-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 12px 24px rgba(15,23,42,.18);color:var(--text-color)}
-      #wrap{display:inline-block;opacity:0;transform:translateY(12px);transition:opacity .18s ease,transform .18s ease}#wrap.visible{opacity:1;transform:translateY(0)}#card{max-width:min(72vw,760px);padding:18px 22px;border-radius:24px;border:1px solid var(--card-border);background:var(--card-bg);box-shadow:var(--card-shadow);backdrop-filter:blur(var(--card-blur))}#text{font-size:30px;font-weight:800;line-height:1.12;word-break:break-word;color:var(--text-color);text-shadow:var(--text-shadow)}#tokens{display:none;flex-wrap:wrap;gap:10px}.token{padding:10px 14px;border-radius:18px;font-size:22px;font-weight:700;line-height:1;color:var(--token-fg);background:var(--token-bg);border:1px solid var(--token-line);box-shadow:var(--token-shadow)}
-      #accent{display:none;width:84px;height:5px;border-radius:999px;background:var(--accent);box-shadow:var(--accent-shadow);margin-bottom:10px}.text-mode #text{display:block}.text-mode #tokens{display:none}.token-mode #text{display:none}.token-mode #tokens{display:flex}.accent-visible #accent{display:block}
+      html,body{margin:0;background:transparent;overflow:hidden}body{display:inline-block;padding:28px;pointer-events:none;user-select:none;-webkit-user-select:none;font-family:"Segoe UI","Microsoft YaHei",sans-serif;--fg:#fff;--text-color:var(--fg);--accent:#38bdf8;--card-bg:transparent;--card-border:transparent;--card-shadow:none;--card-blur:0px;--text-shadow:none;--accent-shadow:none;--token-bg:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.08));--token-line:rgba(255,255,255,.1);--token-fg:var(--text-color);--token-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 12px 24px rgba(15,23,42,.18);color:var(--text-color)}
+      #wrap{display:inline-block;opacity:0;transform:translateY(12px);transition:opacity .18s ease,transform .18s ease}#wrap.visible{opacity:1;transform:translateY(0)}#card{max-width:min(72vw,760px);padding:18px 22px;border-radius:24px;border:1px solid var(--card-border);background:var(--card-bg);box-shadow:var(--card-shadow);backdrop-filter:blur(var(--card-blur));display:flex;flex-direction:column;align-items:flex-start}.accent-vertical #card{flex-direction:row;align-items:flex-start}#text{font-size:30px;font-weight:800;line-height:1.12;word-break:break-word;color:var(--text-color);text-shadow:var(--text-shadow)}#tokens{display:none;flex-wrap:wrap;gap:10px}.token,.consecutive-token{padding:10px 14px;border-radius:18px;font-size:22px;font-weight:700;line-height:1;color:var(--token-fg);background:var(--token-bg);border:1px solid var(--token-line);box-shadow:var(--token-shadow)}
+      #accent{display:none;width:84px;height:5px;border-radius:999px;background:var(--accent);box-shadow:var(--accent-shadow);margin-bottom:10px;flex:none}.accent-vertical #accent{width:5px;height:84px;margin-bottom:0;margin-right:12px}.text-mode #text{display:block}.text-mode #tokens{display:none}.token-mode #text{display:none}.token-mode #tokens{display:flex}.accent-visible #accent{display:block}
+      #consecutive-container{display:none;align-items:center;flex-wrap:wrap;gap:10px}#consecutive-container.visible{display:flex}.consecutive-vertical #consecutive-container{flex-direction:column;align-items:flex-start;gap:8px}.consecutive-token{white-space:nowrap}.consecutive-arrow{display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:var(--text-color);opacity:0.45}.consecutive-horizontal .consecutive-arrow{font-size:28px;line-height:1}.consecutive-vertical .consecutive-arrow{font-size:18px;line-height:1;min-height:16px;padding-left:18px}
+      #key-count{display:none;font-size:14px;font-weight:600;color:var(--text-color);opacity:0.7;margin-left:8px}.consecutive-vertical #key-count{margin-left:0}.count-visible.consecutive-visible #key-count{display:inline-block}
+      
       [data-theme="keycaps-dark"]{--card-bg:linear-gradient(180deg,rgba(15,23,42,.3),rgba(15,23,42,.16));--card-border:rgba(148,163,184,.18);--card-shadow:0 18px 40px rgba(15,23,42,.22)}
       [data-theme="keycaps-light"]{--fg:#0f172a;--card-bg:linear-gradient(180deg,rgba(255,255,255,.92),rgba(241,245,249,.82));--card-border:rgba(148,163,184,.3);--card-shadow:0 18px 36px rgba(148,163,184,.22);--token-bg:linear-gradient(180deg,#fff,#e2e8f0);--token-line:rgba(148,163,184,.4);--token-fg:var(--text-color);--token-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 12px 24px rgba(148,163,184,.22)}
       [data-theme="text-only"]{--card-bg:transparent;--card-border:transparent;--card-shadow:none}
@@ -23,32 +26,124 @@
     </style>
   </head>
   <body>
-    <div id="wrap"><div id="card"><div id="accent"></div><div id="text">Ready</div><div id="tokens"></div></div></div>
+    <div id="wrap"><div id="card"><div id="accent"></div><div id="text">Ready</div><div id="tokens"></div><div id="consecutive-container"></div><span id="key-count"></span></div></div>
     <script type="module">
       import { invoke } from "@tauri-apps/api/core";
       import { listen } from "@tauri-apps/api/event";
       import { LogicalSize, getCurrentWindow } from "@tauri-apps/api/window";
-      const currentWindow = getCurrentWindow(), wrap = document.getElementById("wrap"), accent = document.getElementById("accent"), text = document.getElementById("text"), tokens = document.getElementById("tokens");
-      const tokenThemes = new Set(["keycaps-dark", "keycaps-light"]); let hideTimer = 0;
+      const currentWindow = getCurrentWindow(), wrap = document.getElementById("wrap"), accent = document.getElementById("accent"), text = document.getElementById("text"), tokens = document.getElementById("tokens"), consecutiveContainer = document.getElementById("consecutive-container"), keyCount = document.getElementById("key-count");
+      const tokenThemes = new Set(["keycaps-dark", "keycaps-light"]);
+      let currentConfig = { show_key_count: false, display_mode: "combo-precedence", scroll_direction: "horizontal", queue_idle_timeout_ms: 400 };
+      let hideTimer = 0, animationFrame = 0;
       const applyAppearance = (config) => {
         const nextTheme = config?.theme || "keycaps-dark";
         const nextColor = config?.text_color || "#ffffff";
         const nextAccentColor = config?.accent_color || "#38bdf8";
+        currentConfig = { show_key_count: config?.show_key_count || false, display_mode: config?.display_mode || "combo-precedence", scroll_direction: config?.scroll_direction || "horizontal", queue_idle_timeout_ms: config?.queue_idle_timeout_ms || 400 };
         document.body.dataset.theme = nextTheme;
         document.body.style.setProperty("--text-color", nextColor);
         document.body.style.setProperty("--accent", nextAccentColor);
         document.body.classList.toggle("token-mode", tokenThemes.has(nextTheme));
         document.body.classList.toggle("text-mode", !tokenThemes.has(nextTheme));
-        document.body.classList.toggle("accent-visible", Boolean(config?.accent_visible) && !tokenThemes.has(nextTheme));
+        document.body.classList.toggle("accent-visible", Boolean(config?.accent_visible));
+        document.body.classList.toggle("count-visible", Boolean(config?.show_key_count));
+        document.body.classList.toggle("accent-vertical", currentConfig.scroll_direction === "vertical");
+        document.body.classList.toggle("consecutive-horizontal", currentConfig.scroll_direction !== "vertical");
+        document.body.classList.toggle("consecutive-vertical", currentConfig.scroll_direction === "vertical");
       };
       const renderTokens = (content) => { tokens.innerHTML = ""; content.split(" + ").filter(Boolean).forEach((key) => { const item = document.createElement("span"); item.className = "token"; item.textContent = key; tokens.appendChild(item); }); };
-      const syncAccent = () => { const range = document.createRange(); range.selectNodeContents(text); accent.style.width = `${Math.max(84, Math.ceil(range.getBoundingClientRect().width))}px`; };
+      const renderConsecutive = (keys, keyCountValue) => {
+        consecutiveContainer.innerHTML = "";
+        keys.forEach((key, idx) => {
+          const token = document.createElement("span");
+          token.className = "consecutive-token";
+          token.textContent = key;
+          consecutiveContainer.appendChild(token);
+          if (idx < keys.length - 1) {
+            const arrow = document.createElement("span");
+            arrow.className = "consecutive-arrow";
+            arrow.textContent = currentConfig.scroll_direction === "vertical" ? "↓" : "→";
+            consecutiveContainer.appendChild(arrow);
+          }
+          if (currentConfig.scroll_direction === "fade") {
+            const minOpacity = 0.38;
+            const ratio = keys.length <= 1 ? 1 : idx / (keys.length - 1);
+            token.style.opacity = `${minOpacity + ratio * (1 - minOpacity)}`;
+          }
+        });
+        if (currentConfig.show_key_count && keyCountValue > 1) {
+          keyCount.textContent = `×${keyCountValue}`;
+          keyCount.title = `连续按键 ${keyCountValue}`;
+        }
+      };
+      const syncAccent = () => {
+        const active = consecutiveContainer.classList.contains("visible") ? consecutiveContainer : tokenThemes.has(document.body.dataset.theme) ? tokens : text;
+        const rect = active.getBoundingClientRect();
+        if (currentConfig.scroll_direction === "vertical") {
+          accent.style.width = "5px";
+          accent.style.height = `${Math.max(84, Math.ceil(rect.height))}px`;
+          return;
+        }
+        accent.style.height = "5px";
+        accent.style.width = `${Math.max(84, Math.ceil(rect.width))}px`;
+      };
       const syncSize = async () => { await new Promise((resolve) => requestAnimationFrame(resolve)); const rect = wrap.getBoundingClientRect(); await currentWindow.setSize(new LogicalSize(Math.max(350, Math.ceil(rect.width + 56)), Math.ceil(rect.height + 56))); };
-      const show = async (content) => { text.textContent = content; renderTokens(content); syncAccent(); await syncSize(); wrap.classList.add("visible"); clearTimeout(hideTimer); await currentWindow.show(); hideTimer = setTimeout(() => { wrap.classList.remove("visible"); void currentWindow.hide(); }, 1500); };
+      const modifierKeys = new Set(["Ctrl", "Shift", "Alt", "Win"]);
+      const shouldRenderConsecutive = (keys) => {
+        if (!Array.isArray(keys) || keys.length <= 1) return false;
+        if (currentConfig.display_mode === "all-sequential") return true;
+        if (currentConfig.display_mode === "all-sequential-persistent") return true;
+        if (currentConfig.display_mode !== "smart-mixed") return false;
+        return !keys.some((key) => modifierKeys.has(key));
+      };
+      const show = async (payload) => {
+        const { text: contentText, keys, key_count: keyCountValue, clear } = payload;
+        if (clear) {
+          clearTimeout(hideTimer);
+          wrap.classList.remove("visible");
+          await currentWindow.hide();
+          return;
+        }
+        const isConsecutive = shouldRenderConsecutive(keys);
+        text.textContent = contentText;
+        renderTokens(contentText);
+        syncAccent();
+        if (isConsecutive) {
+          renderConsecutive(keys, keyCountValue || keys.length);
+          consecutiveContainer.style.display = "";
+          consecutiveContainer.classList.add("visible");
+          document.body.classList.add("consecutive-visible");
+          tokens.style.display = "none";
+          text.style.display = "none";
+        } else {
+          consecutiveContainer.classList.remove("visible");
+          consecutiveContainer.style.display = "none";
+          document.body.classList.remove("consecutive-visible");
+          tokens.style.display = "";
+          text.style.display = "";
+          keyCount.textContent = "";
+          keyCount.title = "";
+        }
+        syncAccent();
+        await syncSize();
+        wrap.classList.add("visible");
+        clearTimeout(hideTimer);
+        await currentWindow.show();
+        const displayDuration = currentConfig.display_mode === "all-sequential-persistent" ? currentConfig.queue_idle_timeout_ms : 1500;
+        hideTimer = setTimeout(() => {
+          wrap.classList.remove("visible");
+          void currentWindow.hide();
+        }, displayDuration);
+      };
       setTimeout(() => {
         invoke("get_keycast_overlay_config").then((config) => applyAppearance(config)).catch(() => {});
         listen("keycast:config-updated", (event) => event.payload && applyAppearance(event.payload));
-        listen("keycast:display", (event) => event.payload?.text && void show(event.payload.text));
+        listen("keycast:display", (event) => {
+          if (event.payload?.text) {
+            cancelAnimationFrame(animationFrame);
+            animationFrame = requestAnimationFrame(() => void show(event.payload));
+          }
+        });
       }, 0);
     </script>
   </body>

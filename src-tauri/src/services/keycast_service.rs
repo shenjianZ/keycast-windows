@@ -18,6 +18,25 @@ const DEFAULT_COMBO_WINDOW_MS: i64 = 500;
 #[cfg(target_os = "windows")]
 use windows::Win32::UI::Input::KeyboardAndMouse::GetAsyncKeyState;
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum KeycastDisplayMode {
+    ComboOnly,
+    SingleOnly,
+    ComboPrecedence,
+    AllSequential,
+    AllSequentialPersistent,
+    SmartMixed,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum KeycastScrollDirection {
+    Horizontal,
+    Vertical,
+    Fade,
+}
+
 #[derive(Clone)]
 pub struct KeycastRuntime {
     is_listening: Arc<AtomicBool>,
@@ -36,6 +55,8 @@ pub struct KeycastState {
 pub struct KeycastDisplayPayload {
     pub text: String,
     pub keys: Vec<String>,
+    pub key_count: usize,
+    pub clear: bool,
     pub timestamp: i64,
 }
 
@@ -53,12 +74,28 @@ pub struct KeycastOverlayConfig {
     pub accent_visible: bool,
     #[serde(default = "default_keycast_accent_color")]
     pub accent_color: String,
+    // 新增配置项
+    #[serde(default = "default_display_mode")]
+    pub display_mode: KeycastDisplayMode,
+    #[serde(default = "default_max_consecutive_keys")]
+    pub max_consecutive_keys: i64,
+    #[serde(default = "default_consecutive_window_ms")]
+    pub consecutive_window_ms: i64,
+    #[serde(default = "default_queue_idle_timeout_ms")]
+    pub queue_idle_timeout_ms: i64,
+    #[serde(default = "default_show_key_count")]
+    pub show_key_count: bool,
+    #[serde(default = "default_scroll_direction")]
+    pub scroll_direction: KeycastScrollDirection,
 }
 
 #[derive(Default)]
 struct KeySequenceTracker {
     pending_modifiers: Vec<String>,
     pending_started_at: Option<i64>,
+    consecutive_keys: Vec<String>,
+    consecutive_started_at: Option<i64>,
+    consecutive_count: usize,
 }
 
 pub struct KeycastService;
@@ -84,6 +121,12 @@ impl Default for KeycastOverlayConfig {
             text_color: default_keycast_text_color(),
             accent_visible: default_keycast_accent_visible(),
             accent_color: default_keycast_accent_color(),
+            display_mode: default_display_mode(),
+            max_consecutive_keys: default_max_consecutive_keys(),
+            consecutive_window_ms: default_consecutive_window_ms(),
+            queue_idle_timeout_ms: default_queue_idle_timeout_ms(),
+            show_key_count: default_show_key_count(),
+            scroll_direction: default_scroll_direction(),
         }
     }
 }
@@ -108,15 +151,100 @@ fn default_keycast_accent_color() -> String {
     "#fb923c".to_string()
 }
 
+// 新增默认值函数
+fn default_display_mode() -> KeycastDisplayMode {
+    KeycastDisplayMode::ComboPrecedence
+}
+
+fn default_max_consecutive_keys() -> i64 {
+    5
+}
+
+fn default_consecutive_window_ms() -> i64 {
+    400
+}
+
+fn default_queue_idle_timeout_ms() -> i64 {
+    400
+}
+
+fn default_show_key_count() -> bool {
+    false
+}
+
+fn default_scroll_direction() -> KeycastScrollDirection {
+    KeycastScrollDirection::Horizontal
+}
+
 impl KeySequenceTracker {
+    fn take_idle_clear_payload(
+        &mut self,
+        display_mode: &KeycastDisplayMode,
+        queue_idle_timeout_ms: i64,
+    ) -> Option<KeycastDisplayPayload> {
+        if !matches!(display_mode, KeycastDisplayMode::AllSequentialPersistent) {
+            return None;
+        }
+        let now = Utc::now().timestamp_millis();
+        if !self.consecutive_keys.is_empty() && self.is_consecutive_stale(now, queue_idle_timeout_ms) {
+            self.consecutive_keys.clear();
+            self.consecutive_started_at = None;
+            self.consecutive_count = 0;
+            return Some(build_clear_payload());
+        }
+        None
+    }
+
     fn handle(
         &mut self,
         virtual_key: u16,
         is_down: bool,
         combo_window_ms: i64,
+        display_mode: &KeycastDisplayMode,
+        max_consecutive_keys: i64,
+        consecutive_window_ms: i64,
+        queue_idle_timeout_ms: i64,
     ) -> Option<KeycastDisplayPayload> {
         let now = Utc::now().timestamp_millis();
         let key = key_name(virtual_key)?;
+
+        // 根据显示模式处理按键
+        match display_mode {
+            KeycastDisplayMode::ComboOnly => {
+                // 仅组合键模式
+                self.handle_combo_only(key, is_down, now, combo_window_ms)
+            }
+            KeycastDisplayMode::SingleOnly => {
+                // 仅单个按键模式
+                self.handle_single_only(key, is_down, now, consecutive_window_ms, max_consecutive_keys)
+            }
+            KeycastDisplayMode::ComboPrecedence => {
+                // 组合键优先模式
+                self.handle_combo_precedence(key, is_down, now, combo_window_ms, consecutive_window_ms, max_consecutive_keys)
+            }
+            KeycastDisplayMode::AllSequential => {
+                // 所有按键连续显示
+                self.handle_all_sequential(key, is_down, now, consecutive_window_ms, max_consecutive_keys)
+            }
+            KeycastDisplayMode::AllSequentialPersistent => {
+                // 所有按键队列显示（空闲超时后清空）
+                self.handle_all_sequential_persistent(key, is_down, now, queue_idle_timeout_ms, max_consecutive_keys)
+            }
+            KeycastDisplayMode::SmartMixed => {
+                // 智能混合模式
+                self.handle_smart_mixed(key, is_down, now, combo_window_ms, consecutive_window_ms, max_consecutive_keys)
+            }
+        }
+    }
+
+    // 仅组合键模式
+    fn handle_combo_only(
+        &mut self,
+        key: String,
+        is_down: bool,
+        now: i64,
+        combo_window_ms: i64,
+    ) -> Option<KeycastDisplayPayload> {
         if is_modifier_key(&key) {
             return if is_down {
                 self.handle_modifier_down(key, now, combo_window_ms)
@@ -131,10 +259,201 @@ impl KeySequenceTracker {
             self.pending_modifiers.clear();
             self.pending_started_at = None;
         }
-        let mut keys = take_modifiers(&mut self.pending_modifiers);
-        self.pending_started_at = None;
-        keys.push(key);
-        Some(build_payload(keys))
+        // 只有当有修饰键时才显示
+        if !self.pending_modifiers.is_empty() {
+            let mut keys = take_modifiers(&mut self.pending_modifiers);
+            self.pending_started_at = None;
+            keys.push(key);
+            Some(build_payload(keys))
+        } else {
+            None
+        }
+    }
+
+    // 仅单个按键模式
+    fn handle_single_only(
+        &mut self,
+        key: String,
+        is_down: bool,
+        _now: i64,
+        _consecutive_window_ms: i64,
+        _max_consecutive_keys: i64,
+    ) -> Option<KeycastDisplayPayload> {
+        if is_modifier_key(&key) {
+            return None; // 忽略修饰键
+        }
+        if !is_down {
+            return None;
+        }
+        // 只显示当前按键，不累积
+        Some(build_payload(vec![key]))
+    }
+
+    // 组合键优先模式
+    fn handle_combo_precedence(
+        &mut self,
+        key: String,
+        is_down: bool,
+        now: i64,
+        combo_window_ms: i64,
+        _consecutive_window_ms: i64,
+        _max_consecutive_keys: i64,
+    ) -> Option<KeycastDisplayPayload> {
+        if is_modifier_key(&key) {
+            return if is_down {
+                self.handle_modifier_down(key, now, combo_window_ms)
+            } else {
+                self.handle_modifier_up()
+            };
+        }
+        if !is_down {
+            return None;
+        }
+
+        // 检查是否有待处理的修饰键
+        if !self.pending_modifiers.is_empty() {
+            if self.is_pending_stale(now, combo_window_ms) {
+                self.pending_modifiers.clear();
+                self.pending_started_at = None;
+            } else {
+                // 有修饰键，作为组合键处理
+                let mut keys = take_modifiers(&mut self.pending_modifiers);
+                self.pending_started_at = None;
+                keys.push(key);
+                return Some(build_payload(keys));
+            }
+        }
+
+        // 没有修饰键，作为单个按键处理
+        // 在 combo-precedence 模式下，不累积显示，只显示当前按键
+        Some(build_payload(vec![key]))
+    }
+
+    // 所有按键连续显示模式
+    fn handle_all_sequential(
+        &mut self,
+        key: String,
+        is_down: bool,
+        now: i64,
+        queue_idle_timeout_ms: i64,
+        max_consecutive_keys: i64,
+    ) -> Option<KeycastDisplayPayload> {
+        if !is_down {
+            return None;
+        }
+
+        if self.is_consecutive_stale(now, queue_idle_timeout_ms) {
+            self.consecutive_keys.clear();
+            self.consecutive_started_at = None;
+            self.consecutive_count = 0;
+        }
+        self.handle_consecutive_key(key, now, queue_idle_timeout_ms, max_consecutive_keys)
+    }
+
+    fn handle_all_sequential_persistent(
+        &mut self,
+        key: String,
+        is_down: bool,
+        now: i64,
+        queue_idle_timeout_ms: i64,
+        max_consecutive_keys: i64,
+    ) -> Option<KeycastDisplayPayload> {
+        if !is_down {
+            return None;
+        }
+        if self.is_consecutive_stale(now, queue_idle_timeout_ms) {
+            self.consecutive_keys.clear();
+            self.consecutive_started_at = None;
+            self.consecutive_count = 0;
+        }
+        self.consecutive_keys.push(key);
+        self.consecutive_started_at = Some(now);
+        if self.consecutive_keys.len() > max_consecutive_keys as usize {
+            self.consecutive_keys.remove(0);
+        }
+        self.consecutive_count = self.consecutive_keys.len();
+        Some(build_payload_with_count(
+            self.consecutive_keys.clone(),
+            self.consecutive_count,
+        ))
+    }
+
+    // 智能混合模式
+    fn handle_smart_mixed(
+        &mut self,
+        key: String,
+        is_down: bool,
+        now: i64,
+        combo_window_ms: i64,
+        consecutive_window_ms: i64,
+        max_consecutive_keys: i64,
+    ) -> Option<KeycastDisplayPayload> {
+        // 智能判断：如果短时间内连续按普通键，使用连续模式
+        // 如果按修饰键组合，使用组合键模式
+        if is_modifier_key(&key) {
+            return if is_down {
+                self.handle_modifier_down(key, now, combo_window_ms)
+            } else {
+                self.handle_modifier_up()
+            };
+        }
+        if !is_down {
+            return None;
+        }
+
+        // 如果有待处理的修饰键，作为组合键
+        if !self.pending_modifiers.is_empty() {
+            if self.is_pending_stale(now, combo_window_ms) {
+                self.pending_modifiers.clear();
+                self.pending_started_at = None;
+            } else {
+                let mut keys = take_modifiers(&mut self.pending_modifiers);
+                self.pending_started_at = None;
+                keys.push(key);
+                return Some(build_payload(keys));
+            }
+        }
+
+        // 检查是否在连续按键窗口内
+        if self.is_consecutive_window_active(now, consecutive_window_ms) {
+            // 在连续按键窗口内，继续累积显示
+            self.handle_consecutive_key(key, now, consecutive_window_ms, max_consecutive_keys)
+        } else {
+            // 新序列的首个按键也要进入连续追踪，否则后续普通键无法升级为连续显示
+            self.consecutive_keys.clear();
+            self.consecutive_started_at = None;
+            self.consecutive_count = 0;
+            self.handle_consecutive_key(key, now, consecutive_window_ms, max_consecutive_keys)
+        }
+    }
+
+    // 处理连续按键
+    fn handle_consecutive_key(
+        &mut self,
+        key: String,
+        now: i64,
+        consecutive_window_ms: i64,
+        max_consecutive_keys: i64,
+    ) -> Option<KeycastDisplayPayload> {
+        // 检查连续按键窗口是否过期
+        if self.is_consecutive_stale(now, consecutive_window_ms) {
+            self.consecutive_keys.clear();
+            self.consecutive_started_at = None;
+            self.consecutive_count = 0;
+        }
+
+        self.consecutive_keys.push(key.clone());
+        self.consecutive_started_at.get_or_insert(now);
+        self.consecutive_count += 1;
+
+        if self.consecutive_keys.len() > max_consecutive_keys as usize {
+            self.consecutive_keys.remove(0);
+        }
+
+        Some(build_payload_with_count(
+            self.consecutive_keys.clone(),
+            self.consecutive_count,
+        ))
     }
 
     fn handle_modifier_down(
@@ -161,8 +480,9 @@ impl KeySequenceTracker {
         if self.pending_modifiers.is_empty() {
             return None;
         }
+        self.pending_modifiers.clear();
         self.pending_started_at = None;
-        Some(build_payload(take_modifiers(&mut self.pending_modifiers)))
+        None
     }
 
     fn is_pending_stale(&self, now: i64, combo_window_ms: i64) -> bool {
@@ -170,12 +490,38 @@ impl KeySequenceTracker {
             .map(|started_at| now - started_at > combo_window_ms)
             .unwrap_or(false)
     }
+
+    fn is_consecutive_stale(&self, now: i64, consecutive_window_ms: i64) -> bool {
+        self.consecutive_started_at
+            .map(|started_at| now - started_at > consecutive_window_ms)
+            .unwrap_or(false)
+    }
+
+    fn is_consecutive_window_active(&self, now: i64, consecutive_window_ms: i64) -> bool {
+        !self.is_consecutive_stale(now, consecutive_window_ms) && !self.consecutive_keys.is_empty()
+    }
 }
 
 fn build_payload(keys: Vec<String>) -> KeycastDisplayPayload {
+    build_payload_with_count(keys.clone(), keys.len())
+}
+
+fn build_payload_with_count(keys: Vec<String>, key_count: usize) -> KeycastDisplayPayload {
     KeycastDisplayPayload {
         text: keys.join(" + "),
         keys,
+        key_count,
+        clear: false,
+        timestamp: Utc::now().timestamp_millis(),
+    }
+}
+
+fn build_clear_payload() -> KeycastDisplayPayload {
+    KeycastDisplayPayload {
+        text: String::new(),
+        keys: Vec::new(),
+        key_count: 0,
+        clear: true,
         timestamp: Utc::now().timestamp_millis(),
     }
 }
@@ -353,11 +699,29 @@ impl KeycastService {
             let mut tracker = KeySequenceTracker::default();
             let mut pressed = [false; 256];
             while !stop_flag.load(Ordering::SeqCst) {
-                let combo_window_ms = runtime
+                // 读取所有需要的配置项
+                let (combo_window_ms, display_mode, max_consecutive_keys, consecutive_window_ms, queue_idle_timeout_ms) = runtime
                     .overlay_config
                     .lock()
-                    .map(|config| config.combo_window_ms)
-                    .unwrap_or(DEFAULT_COMBO_WINDOW_MS);
+                    .map(|config| (
+                        config.combo_window_ms,
+                        config.display_mode.clone(),
+                        config.max_consecutive_keys,
+                        config.consecutive_window_ms,
+                        config.queue_idle_timeout_ms
+                    ))
+                    .unwrap_or((
+                        DEFAULT_COMBO_WINDOW_MS,
+                        KeycastDisplayMode::ComboPrecedence,
+                        5,
+                        400,
+                        400
+                    ));
+
+                if let Some(payload) = tracker.take_idle_clear_payload(&display_mode, queue_idle_timeout_ms) {
+                    let _ = app.emit("keycast:display", payload);
+                }
+
                 for vk in 1_u16..=254_u16 {
                     let is_down = is_virtual_key_down(vk);
                     let slot = &mut pressed[vk as usize];
@@ -365,7 +729,15 @@ impl KeycastService {
                         continue;
                     }
                     *slot = is_down;
-                    if let Some(payload) = tracker.handle(vk, is_down, combo_window_ms) {
+                    if let Some(payload) = tracker.handle(
+                        vk,
+                        is_down,
+                        combo_window_ms,
+                        &display_mode,
+                        max_consecutive_keys,
+                        consecutive_window_ms,
+                        queue_idle_timeout_ms
+                    ) {
                         let _ = app.emit("keycast:display", payload);
                     }
                 }
@@ -487,6 +859,10 @@ impl KeycastService {
         ) {
             config.theme = default_keycast_theme();
         }
+        // 新增配置项的验证和规范化
+        config.max_consecutive_keys = config.max_consecutive_keys.clamp(3, 20);
+        config.consecutive_window_ms = config.consecutive_window_ms.clamp(200, 800);
+        config.queue_idle_timeout_ms = config.queue_idle_timeout_ms.clamp(200, 5000);
         config
     }
 }

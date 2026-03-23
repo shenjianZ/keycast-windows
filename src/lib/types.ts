@@ -12,6 +12,16 @@ export type KeycastTheme =
   | "neon-cyan"
   | "paper-card";
 
+export type KeycastDisplayMode =
+  | "combo-only" // 仅组合键模式（默认）
+  | "single-only" // 仅单个按键模式
+  | "combo-precedence" // 组合键优先（有组合键显示组合，无则显示单个）
+  | "all-sequential" // 所有按键连续显示（不区分组合/单个）
+  | "all-sequential-persistent" // 所有按键队列显示（无窗口，不因超时清空）
+  | "smart-mixed"; // 智能混合模式
+
+export type KeycastScrollDirection = "horizontal" | "vertical" | "fade";
+
 export type KeycastState = { is_listening: boolean; is_overlay_visible: boolean };
 
 export type KeycastOverlayConfig = {
@@ -22,6 +32,13 @@ export type KeycastOverlayConfig = {
   text_color: string;
   accent_visible: boolean;
   accent_color: string;
+  // 新增配置项 - 使用 kebab-case 与 Rust 保持一致
+  display_mode: KeycastDisplayMode;
+  max_consecutive_keys: number;
+  consecutive_window_ms: number;
+  queue_idle_timeout_ms: number;
+  show_key_count: boolean;
+  scroll_direction: KeycastScrollDirection;
 };
 
 export type Locale = "zh-CN" | "en-US";
