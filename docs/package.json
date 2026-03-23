@@ -7,13 +7,12 @@
     "dev": "npm run build:shiki && vite",
     "build": "npm run build:search && npm run build:shiki && tsc -b && vite build",
     "build:cloudflare": "pnpm run build",
-    "deploy:cloudflare": "pnpm dlx wrangler@3 deploy --config wrangler.toml --site dist",
+    "deploy:cloudflare": "pnpm dlx wrangler@4 deploy --config wrangler.toml",
     "preview": "vite preview",
     "build:search": "node scripts/generate-search-index.js",
     "build:shiki": "node scripts/generate-shiki-bundle.js"
   },
   "dependencies": {
-    "@cloudflare/kv-asset-handler": "^0.4.2",
     "buffer": "^6.0.3",
     "flexsearch": "^0.8.212",
     "gray-matter": "^4.0.3",

@@ -112,5 +112,5 @@ pnpm tauri signer generate -w $HOME/.tauri/keycast-windows.key
 ## 文档部署
 
 - 文档通过 Cloudflare Workers `keycast-windows.shenjianzlt.workers.dev` 访问，CI 会在 `.github/workflows/deploy-cloudflare.yml` 里先运行 `pnpm run build:cloudflare`，再执行 `pnpm run deploy:cloudflare` 将 `docs/dist` 推送到 Worker。
-- `docs/wrangler.toml` 配置了 static-site 的 `site.bucket`，而 `docs/workers-site/index.js` 使用 `@cloudflare/kv-asset-handler` 提供静态资源，如果希望在本地手动发布可以运行 `pnpm run deploy:cloudflare`。
-- 请在仓库 secrets 中提供 `CLOUDFLARE_API_TOKEN` 和 `CF_ACCOUNT_ID`，wrangler 会从这两个环境变量读取凭据以调用 `keycast-windows` Worker（访问地址就是 `keycast-windows.shenjianzlt.workers.dev`）。
+- `docs/wrangler.toml` 现在使用 Wrangler v4 的 `assets.directory` 直接发布 `docs/dist`，本地手动发布时运行 `pnpm run deploy:cloudflare` 即可。
+- 请在仓库 secrets 中提供 `CLOUDFLARE_API_TOKEN` 和 `CLOUDFLARE_ACCOUNT_ID`，wrangler 会从这两个环境变量读取凭据以调用 `keycast-windows` Worker（访问地址就是 `keycast-windows.shenjianzlt.workers.dev`）。
