@@ -107,4 +107,4 @@ pnpm tauri signer generate -w $HOME/.tauri/keycast-windows.key
   - `$HOME/.tauri/keycast-windows.key.pub` 文件内容 -> `KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY`
   - `$HOME/.tauri/keycast-windows.key` 文件内容 -> `KEYCAST_WINDOWS_TAURI_SIGNING_PRIVATE_KEY`
   - 生成私钥时输入的密码 -> `KEYCAST_WINDOWS_TAURI_SIGNING_PRIVATE_KEY_PASSWORD`
-- Release 会额外上传 `latest.json`、`*-updater.zip` 和对应 `.sig` 文件，供应用内更新使用。
+- Release 会额外上传 `latest.json`、Windows `setup.exe` 和对应的 `.exe.sig` 文件，供应用内更新使用。

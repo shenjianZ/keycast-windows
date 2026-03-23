@@ -69,17 +69,17 @@ jobs:
             Rename-Item -Path $file.Name -NewName ("{0}_{1}-windows-x86_64-setup.exe" -f $env:APP_NAME, $env:GITHUB_REF_NAME)
           }
 
-      - name: Rename Windows updater artifacts
+      - name: Rename Windows updater signature
         shell: pwsh
         run: |
           cd src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis
-          $zip = Get-ChildItem *.zip | Select-Object -First 1
-          if ($null -eq $zip) { throw "Updater zip not found" }
-          $newZip = "{0}_{1}-windows-x86_64-updater.zip" -f $env:APP_NAME, $env:GITHUB_REF_NAME
-          Rename-Item -Path $zip.Name -NewName $newZip
-          $sigPath = "{0}.sig" -f $zip.Name
-          if (Test-Path $sigPath) {
-            Rename-Item -Path $sigPath -NewName ("{0}.sig" -f $newZip)
+          $exe = Get-ChildItem *.exe | Select-Object -First 1
+          if ($null -eq $exe) { throw "NSIS installer not found" }
+          $sig = Get-ChildItem *.sig | Select-Object -First 1
+          if ($null -eq $sig) { throw "NSIS signature not found" }
+          $targetSig = "{0}.sig" -f $exe.Name
+          if ($sig.Name -ne $targetSig) {
+            Rename-Item -Path $sig.Name -NewName $targetSig
           }
 
       - name: Rename Windows MSI
@@ -94,8 +94,9 @@ jobs:
         shell: pwsh
         run: |
           cd src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis
-          $zip = Get-ChildItem *-updater.zip | Select-Object -First 1
-          $signature = Get-Content ("{0}.sig" -f $zip.Name) -Raw
+          $exe = Get-ChildItem *.exe | Select-Object -First 1
+          if ($null -eq $exe) { throw "NSIS installer not found" }
+          $signature = Get-Content ("{0}.sig" -f $exe.Name) -Raw
           $version = $env:GITHUB_REF_NAME.TrimStart("v")
           $manifest = @{
             version = $version
@@ -104,7 +105,7 @@ jobs:
             platforms = @{
               "windows-x86_64" = @{
                 signature = $signature.Trim()
-                url = "https://github.com/$env:GITHUB_REPOSITORY/releases/download/$env:GITHUB_REF_NAME/$($zip.Name)"
+                url = "https://github.com/$env:GITHUB_REPOSITORY/releases/download/$env:GITHUB_REF_NAME/$($exe.Name)"
               }
             }
           } | ConvertTo-Json -Depth 5
@@ -129,8 +130,7 @@ jobs:
         with:
           name: keycast-windows-${{ github.ref_name }}-updater
           path: |
-            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*-updater.zip
-            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*-updater.zip.sig
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*.exe.sig
             src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/latest.json
           retention-days: 30
 
@@ -143,8 +143,7 @@ jobs:
           generate_release_notes: true
           files: |
             src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*.exe
-            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*-updater.zip
-            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*-updater.zip.sig
+            src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/*.exe.sig
             src-tauri/target/x86_64-pc-windows-msvc/release/bundle/nsis/latest.json
             src-tauri/target/x86_64-pc-windows-msvc/release/bundle/msi/*.msi
         env:
