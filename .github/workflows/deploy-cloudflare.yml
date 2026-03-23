@@ -36,4 +36,4 @@ jobs:
       - name: Build documentation
         run: pnpm run build:cloudflare
       - name: Deploy to Cloudflare Workers
-        run: pnpm dlx wrangler@3 deploy --config wrangler.toml --site dist --account-id ${{ secrets.CF_ACCOUNT_ID }}
+        run: pnpm run deploy:cloudflare
