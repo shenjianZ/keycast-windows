@@ -315,8 +315,6 @@ function searchIndexPlugin() {
                 });
             };
 
-            generateIndex();
-
             const isDocFile = (file) => {
                 return (
                     file.includes(path.sep + "docs" + path.sep) &&

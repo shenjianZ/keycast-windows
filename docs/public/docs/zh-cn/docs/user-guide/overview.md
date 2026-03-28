@@ -2,7 +2,7 @@
 title: "功能概览"
 description: "Keycast Windows 完整功能介绍"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 功能概览

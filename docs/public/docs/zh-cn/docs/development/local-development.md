@@ -2,7 +2,7 @@
 title: "本地运行"
 description: "Keycast Windows 本地开发运行指南"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 本地运行

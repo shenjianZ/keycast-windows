@@ -2,7 +2,7 @@
 title: "Shortcuts"
 description: "Configure global hotkeys to quickly toggle keystroke monitoring"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # Shortcut Settings

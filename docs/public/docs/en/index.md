@@ -2,7 +2,7 @@
 title: "Keycast Windows"
 description: "A concise and efficient desktop keystroke overlay tool for Windows"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # Keycast Windows

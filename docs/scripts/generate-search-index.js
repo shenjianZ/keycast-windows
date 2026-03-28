@@ -174,8 +174,6 @@ function scanDocsDirectory(docsDir, baseDir, lang, results = []) {
 }
 
 async function generateSearchIndex(lang) {
-  console.log(`Generating search index for language: ${lang}`)
-  
   const docsLangDir = path.join(DOCS_DIR, lang)
   const files = scanDocsDirectory(docsLangDir, path.join(PUBLIC_DIR, 'docs'), lang)
   
@@ -225,8 +223,6 @@ async function generateSearchIndex(lang) {
 }
 
 async function main() {
-  console.log('Starting search index generation...')
-  
   if (!fs.existsSync(DOCS_DIR)) {
     console.error('Docs directory not found:', DOCS_DIR)
     process.exit(1)
@@ -234,18 +230,13 @@ async function main() {
   
   const entries = fs.readdirSync(DOCS_DIR, { withFileTypes: true })
   const langs = entries.filter(e => e.isDirectory()).map(e => e.name)
-  
-  console.log('Found languages:', langs.join(', '))
-  
+
   for (const lang of langs) {
     const index = await generateSearchIndex(lang)
     const outputPath = path.join(PUBLIC_DIR, `search-index-${lang}.json`)
-    
     fs.writeFileSync(outputPath, JSON.stringify(index))
-    console.log(`Generated: ${outputPath} (${index.sections.length} sections)`)
+    console.log(`[search] Generated public/search-index-${lang}.json (${index.sections.length} sections)`)
   }
-  
-  console.log('Search index generation complete!')
 }
 
 main().catch(error => {

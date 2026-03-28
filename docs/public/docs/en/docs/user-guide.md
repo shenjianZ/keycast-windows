@@ -2,7 +2,7 @@
 title: "User Guide"
 description: "Keycast Windows user guide"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # User Guide

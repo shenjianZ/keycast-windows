@@ -2,7 +2,7 @@
 title: "Getting Started"
 description: "Keycast Windows quick start guide"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # Getting Started

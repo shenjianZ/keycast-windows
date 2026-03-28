@@ -2,6 +2,7 @@
 site:
   title: "Keycast Windows Documentation"
   description: "Official documentation for Keycast Windows - A desktop keystroke overlay tool for Windows providing clear key feedback for recording, streaming, demos, and teaching"
+  url: "https://keycast-windows.shenjianzlt.workers.dev"
   logo:
     light: "/images/favicon.svg"
     dark: "/images/favicon-dark.svg"
@@ -18,10 +19,30 @@ navbar:
       active: true
     - title: "Docs"
       link: "/docs"
+    - title: "Changelog"
+      link: "/changelog"
   actions:
     - type: "github"
       link: "https://github.com/shenjianZ/keycast-windows"
       enabled: true
+
+announcement:
+  enabled: true
+  text: "Keycast Windows docs now run on the upgraded template with changelog and richer page metadata."
+  link: "https://github.com/shenjianZ/keycast-windows"
+  dismissible: true
+
+versions:
+  enabled: false
+  current: "v0.1"
+  items:
+    - value: "v0.1"
+      label: "v0.1 (Current)"
+
+changelog:
+  enabled: true
+  title: "Changelog"
+  pageSize: 5
 
 # Sidebar Navigation Configuration
 sidebar:
@@ -120,7 +141,7 @@ footer:
   repository:
     url: "https://github.com/shenjianZ/keycast-windows"
     branch: "master"
-  lastUpdated: "2026-03-23"
+  lastUpdated: "2026-03-28"
   version: "v0.1.6"
   groups:
     - title: "Community"
@@ -187,6 +208,29 @@ mdx:
   componentsPath: "/src/components"
   enabled: true
 
+pageMeta:
+  showLastUpdated: true
+  showEditLink: true
+  showAuthors: true
+  preferGitMeta: true
+
+editLink:
+  enabled: true
+  label: "Edit this page"
+  urlTemplate: "https://github.com/shenjianZ/keycast-windows/edit/master/docs/{filePath}"
+
+feedback:
+  enabled: true
+  endpoint: ""
+  method: "POST"
+  includePageMeta: true
+  labels:
+    helpful: "Helpful"
+    unhelpful: "Not helpful"
+    inputPlaceholder: "Tell us what was unclear or inaccurate"
+    submit: "Submit feedback"
+    thanks: "Thanks for your feedback"
+
 ai:
   enabled: false
 
@@ -215,6 +259,15 @@ search:
   placeholder: "Search docs..."
   maxResults: 20
   snippetLength: 120
+
+seo:
+  enabled: true
+  defaultTitle: "Keycast Windows Documentation"
+  titleTemplate: "{title} | {siteTitle}"
+  defaultDescription: "Official documentation for Keycast Windows"
+  defaultOgImage: "https://keycast-windows.shenjianzlt.workers.dev/images/og-default.png"
+  robots: "index, follow"
+  twitterCard: "summary_large_image"
 
 export:
   enabled: true

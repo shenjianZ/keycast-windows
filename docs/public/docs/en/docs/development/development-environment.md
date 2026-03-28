@@ -2,7 +2,7 @@
 title: "Development Environment"
 description: "Keycast Windows development environment setup guide"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # Development Environment
