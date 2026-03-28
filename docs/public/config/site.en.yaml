@@ -2,6 +2,7 @@
 site:
   title: "Keycast Windows Documentation"
   description: "Official documentation for Keycast Windows - A desktop keystroke overlay tool for Windows providing clear key feedback for recording, streaming, demos, and teaching"
+  url: "https://shenjianz.github.io/keycast-windows/"
   logo:
     light: "/images/favicon.svg"
     dark: "/images/favicon-dark.svg"
@@ -18,10 +19,23 @@ navbar:
       active: true
     - title: "Docs"
       link: "/docs"
+    - title: "Changelog"
+      link: "/changelog"
   actions:
     - type: "github"
       link: "https://github.com/shenjianZ/keycast-windows"
       enabled: true
+
+announcement:
+  enabled: true
+  text: "v0.1.6 ships auto update, 12 preset themes, and 6 display modes"
+  link: "https://github.com/shenjianZ/keycast-windows/releases"
+  dismissible: true
+
+changelog:
+  enabled: true
+  title: "Changelog"
+  pageSize: 10
 
 # Sidebar Navigation Configuration
 sidebar:
@@ -187,6 +201,29 @@ mdx:
   componentsPath: "/src/components"
   enabled: true
 
+pageMeta:
+  showLastUpdated: true
+  showEditLink: true
+  showAuthors: true
+  preferGitMeta: true
+
+editLink:
+  enabled: true
+  label: "Edit this page"
+  urlTemplate: "https://github.com/shenjianZ/keycast-windows/edit/develop/docs-01/public/docs/{filePath}"
+
+feedback:
+  enabled: true
+  endpoint: ""
+  method: "POST"
+  includePageMeta: true
+  labels:
+    helpful: "Helpful"
+    unhelpful: "Not helpful"
+    inputPlaceholder: "Tell us what is outdated, unclear, or missing"
+    submit: "Submit feedback"
+    thanks: "Thanks for your feedback"
+
 ai:
   enabled: false
 
@@ -215,6 +252,15 @@ search:
   placeholder: "Search docs..."
   maxResults: 20
   snippetLength: 120
+
+seo:
+  enabled: true
+  defaultTitle: "Keycast Windows Documentation"
+  titleTemplate: "{title} | {siteTitle}"
+  defaultDescription: "Official documentation for Keycast Windows, a desktop keystroke overlay tool for recording, streaming, demos, and teaching"
+  defaultOgImage: "https://shenjianz.github.io/keycast-windows/images/og-default.png"
+  robots: "index, follow"
+  twitterCard: "summary_large_image"
 
 export:
   enabled: true
