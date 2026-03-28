@@ -5,9 +5,9 @@ const rootDir = process.cwd();
 const publicDir = path.join(rootDir, "public");
 
 function stripFrontmatter(source) {
-    if (!source.startsWith("---\n")) return source;
-    const endIndex = source.indexOf("\n---\n", 4);
-    return endIndex === -1 ? source : source.slice(endIndex + 5);
+    const normalized = source.replace(/^\uFEFF/, "");
+    const match = normalized.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/);
+    return match ? normalized.slice(match[0].length) : source;
 }
 
 async function collectDocFiles(dir, results = []) {

@@ -38,7 +38,8 @@ function tokenize(text) {
 }
 
 function parseFrontmatter(content) {
-  const lines = content.split('\n')
+  const normalized = content.replace(/^\uFEFF/, '')
+  const lines = normalized.split(/\r?\n/)
   const data = {}
   let contentStart = 0
   
