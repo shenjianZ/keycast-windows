@@ -21,9 +21,9 @@ async function collectDocFiles(dir, results = []) {
     return results;
 }
 
-async function getGitValue(args) {
+async function getGitValue(args, cwd = rootDir) {
     try {
-        const { stdout } = await execFileAsync("git", args, { cwd: rootDir });
+        const { stdout } = await execFileAsync("git", args, { cwd });
         return stdout.trim();
     } catch {
         return "";
@@ -32,18 +32,19 @@ async function getGitValue(args) {
 
 async function main() {
     const repoRoot =
-        (await getGitValue(["rev-parse", "--show-toplevel"])) || rootDir;
+        (await getGitValue(["rev-parse", "--show-toplevel"], rootDir)) || rootDir;
     const files = await collectDocFiles(path.join(publicDir, "docs"));
 
     const entries = [];
     for (const file of files) {
-        const relativePath = path.relative(repoRoot, file).replace(/\\/g, "/");
+        const gitRelativePath = path.relative(repoRoot, file).replace(/\\/g, "/");
+        const outputRelativePath = path.relative(rootDir, file).replace(/\\/g, "/");
         const [lastUpdated, author] = await Promise.all([
-            getGitValue(["log", "-1", "--format=%cI", "--", relativePath]),
-            getGitValue(["log", "-1", "--format=%an", "--", relativePath]),
+            getGitValue(["log", "-1", "--format=%cI", "--", gitRelativePath], repoRoot),
+            getGitValue(["log", "-1", "--format=%an", "--", gitRelativePath], repoRoot),
         ]);
         entries.push({
-            relativePath: path.relative(rootDir, file).replace(/\\/g, "/"),
+            relativePath: outputRelativePath,
             meta: { lastUpdated: lastUpdated || undefined, author: author || undefined },
         });
     }
