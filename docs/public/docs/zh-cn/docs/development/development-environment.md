@@ -2,7 +2,7 @@
 title: "开发环境"
 description: "Keycast Windows 开发环境配置指南"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 开发环境

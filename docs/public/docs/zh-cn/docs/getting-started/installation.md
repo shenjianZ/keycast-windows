@@ -2,7 +2,7 @@
 title: "下载安装"
 description: "Keycast Windows 安装指南"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 下载安装

@@ -2,7 +2,7 @@
 title: "Contributing"
 description: "How to contribute to the Keycast Windows project"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # Contributing Guide

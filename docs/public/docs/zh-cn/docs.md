@@ -2,7 +2,7 @@
 title: "文档"
 description: "Keycast Windows 完整文档目录"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 文档

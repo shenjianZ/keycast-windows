@@ -2,7 +2,7 @@
 title: "项目介绍"
 description: "Keycast Windows 项目概述"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 项目介绍

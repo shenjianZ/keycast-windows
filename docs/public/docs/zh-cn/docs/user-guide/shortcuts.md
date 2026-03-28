@@ -2,7 +2,7 @@
 title: "快捷键设置"
 description: "配置全局快捷键快速切换按键监听"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 快捷键设置

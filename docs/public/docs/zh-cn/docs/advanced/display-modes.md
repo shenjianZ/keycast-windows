@@ -2,7 +2,7 @@
 title: "显示模式详解"
 description: "Keycast Windows 六种显示模式详细说明"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 显示模式详解

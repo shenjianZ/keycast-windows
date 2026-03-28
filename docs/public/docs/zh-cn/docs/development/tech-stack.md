@@ -2,7 +2,7 @@
 title: "技术栈"
 description: "Keycast Windows 使用的技术栈介绍"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 技术栈

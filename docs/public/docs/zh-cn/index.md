@@ -2,7 +2,7 @@
 title: "Keycast Windows"
 description: "简洁高效的 Windows 桌面按键屏显工具"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # Keycast Windows

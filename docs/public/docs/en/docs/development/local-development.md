@@ -2,7 +2,7 @@
 title: "Local Development"
 description: "Keycast Windows local development running guide"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # Local Development
