@@ -5,17 +5,17 @@ const rootDir = process.cwd()
 const publicDir = path.join(rootDir, "public")
 
 function parseFrontmatter(source) {
-  if (!source.startsWith("---\n")) return { data: {}, content: source }
-  const endIndex = source.indexOf("\n---\n", 4)
-  if (endIndex === -1) return { data: {}, content: source }
-  const raw = source.slice(4, endIndex)
+  const normalized = source.replace(/^\uFEFF/, "")
+  const match = normalized.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/)
+  if (!match) return { data: {}, content: source }
+  const raw = match[1]
   const data = {}
-  for (const line of raw.split("\n")) {
+  for (const line of raw.split(/\r?\n/)) {
     const index = line.indexOf(":")
     if (index <= 0) continue
     data[line.slice(0, index).trim()] = line.slice(index + 1).trim().replace(/^["']|["']$/g, "")
   }
-  return { data, content: source.slice(endIndex + 5).trim() }
+  return { data, content: normalized.slice(match[0].length).trim() }
 }
 
 function compareVersionsDesc(leftVersion, rightVersion) {
