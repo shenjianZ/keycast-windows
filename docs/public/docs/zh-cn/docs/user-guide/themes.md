@@ -2,7 +2,7 @@
 title: "主题配置"
 description: "Keycast Windows 主题系统介绍"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 主题配置

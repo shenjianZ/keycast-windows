@@ -2,7 +2,7 @@
 title: "更新管理"
 description: "Keycast Windows 自动更新系统"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 更新管理

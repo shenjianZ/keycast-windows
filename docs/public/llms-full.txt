@@ -1,0 +1,3885 @@
+# /en/changelog/v0.1.6
+
+# v0.1.6
+
+## Docs Improvements
+
+- Added release notes content for the Keycast Windows docs site.
+- Standardized document frontmatter metadata by migrating `date` to `createdAt`.
+- Kept `title`, `description`, and `author` metadata aligned for consistent page header rendering.
+
+## Fixes
+
+- Fixed frontmatter being rendered as page content when documents use Windows `CRLF` line endings.
+- Fixed inconsistent metadata presentation across the home page and documentation pages.
+
+# /en/docs/advanced/display-modes
+
+# Display Modes Explained
+
+Keycast Windows provides 6 display modes, each optimized for specific usage scenarios.
+
+## Mode Comparison Table
+
+| Mode Name | Description | Config Value | Use Cases |
+|-----------|-------------|--------------|-----------|
+| Combo Keys Only | Only displays combo keys containing modifier keys | `combo-only` | Shortcut key demos |
+| Single Keys Only | Only displays individual letters, numbers, and symbol keys | `single-only` | Typing demos |
+| Combo Keys First | Prioritizes combo keys, displays single keys when no combo | `combo-precedence` | General scenarios |
+| All Keys Continuous | Displays all keys, scrolls when keys are pressed continuously | `all-sequential` | Fast operations |
+| All Keys Queued | Displays all keys, persists until timeout | `all-sequential-persistent` | Long recording |
+| Smart Hybrid | Automatically switches modes based on typing rhythm | `smart-mixed` | Adaptive scenarios |
+
+## Configuration Parameter Description
+
+| Parameter | Description | Default Value | Range |
+|-----------|-------------|---------------|-------|
+| Combo Window | Time window for merging combo keys | 500 ms | 300-800 ms |
+| Max Keys to Display | Maximum number of keys to display during continuous key presses | 5 | 3-20 |
+| Continuous Key Window | Time window for determining continuous key presses in smart hybrid mode | 400 ms | 200-800 ms |
+| Queue Idle Timeout | Timeout for clearing keys in **All Keys Queued** mode | 2000 ms | 200-5000 ms |
+| Scroll Direction | Scroll effect when continuous keys exceed maximum count | Fade | Horizontal/Vertical/Fade |
+
+
+---
+
+# /en/docs/advanced
+
+# Advanced Features
+
+This section provides detailed information about Keycast Windows' advanced features and configuration options.
+
+## Section Contents
+
+- [Display Modes Explained](docs/advanced/display-modes)
+
+# /en/docs/development/building
+
+---
+title: "Building"
+description: "Keycast Windows build and release guide"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# Building and Packaging
+
+Build release versions of Keycast Windows.
+
+## Build Commands
+
+### Complete Build
+
+```bash
+pnpm tauri build
+```
+
+This command will:
+1. Create an optimized production build
+2. Compile Rust backend code
+3. Package into an installer
+4. Generate executable files
+
+### Build Output
+
+After building, the installer is located at:
+```
+src-tauri/target/release/bundle/nsis/
+```
+
+File name format:
+- `keycast-windows_0.1.4_x64-setup.exe` - Installer
+
+## Build Options
+
+### Build Without Bundling
+
+```bash
+pnpm tauri build --no-bundle
+```
+
+Only generates executable files, does not create an installer.
+
+### Specify Target Platform
+
+```bash
+pnpm tauri build --target x86_64-pc-windows-msvc
+```
+
+## Code Checking
+
+### Check Rust Code
+
+```bash
+cd src-tauri
+cargo check
+```
+
+### Run Tests
+
+```bash
+cd src-tauri
+cargo test
+```
+
+### Code Formatting
+
+```bash
+cd src-tauri
+cargo fmt
+```
+
+## Optimize Build
+
+### Reduce Size
+
+1. Enable LTO (Link Time Optimization)
+2. Use `--release` mode
+3. Remove unnecessary dependencies
+
+### Speed Up Build
+
+1. Use incremental compilation
+2. Parallel compilation
+3. Cache dependencies
+
+## Version Release
+
+### Update Version Number
+
+Modify the following files:
+
+1. `package.json` - Frontend version
+2. `src-tauri/Cargo.toml` - Rust version
+3. `src-tauri/tauri.conf.json` - Application version
+
+You can also use `pnpm version:sync versionNumber` to update version numbers
+
+### Create Git Tag
+
+```bash
+git tag v0.1.4
+git push origin v0.1.4
+```
+
+### GitHub Actions
+
+Configure GitHub Actions for automatic build and release, already configured in .github/workflows/build.yml
+
+## Release Checklist
+
+<BadgeList>
+  <BadgeList.Badge variant="success">Update version number</BadgeList.Badge>
+  <BadgeList.Badge variant="success">Update CHANGELOG</BadgeList.Badge>
+  <BadgeList.Badge variant="success">Run tests</BadgeList.Badge>
+  <BadgeList.Badge variant="success">Local build test</BadgeList.Badge>
+  <BadgeList.Badge variant="success">Create Git tag</BadgeList.Badge>
+  <BadgeList.Badge variant="success">Push tag</BadgeList.Badge>
+</BadgeList>
+
+## Signing and Notarization
+
+### Windows Code Signing
+
+Sign the application with a code signing certificate:
+Note that this signing certificate requires purchase, $200-500/year
+
+```bash
+signtool sign /f certificate.pfx /p password keycast-windows.exe
+```
+
+### SmartScreen Warning
+
+First-time released applications may be warned by Windows SmartScreen, users need to:
+1. Click "More info"
+2. Select "Run anyway"
+
+
+**Next Step**: Learn how to [contribute](docs/development/contributing) to the project.
+
+# /en/docs/development/contributing
+
+# Contributing Guide
+
+Thank you for considering contributing to Keycast Windows!
+
+## How to Contribute
+
+### Report Issues
+
+Found a bug or have a feature suggestion? Please:
+
+1. Visit [Issues](https://github.com/shenjianZ/keycast-windows/issues)
+2. Search for existing related issues
+3. Create a new Issue, describe the problem or suggestion in detail
+
+### Submit Code
+
+#### Fork Project
+
+1. Fork the project to your GitHub account
+2. Clone your fork:
+   ```bash
+   git clone https://github.com/shenjianZ/keycast-windows.git
+   cd keycast-windows
+   ```
+
+#### Create Branch
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+#### Commit Changes
+
+1. Make code modifications
+2. Write clear commit messages
+3. Commit code:
+   ```bash
+   git add .
+   git commit -m "Add: Describe your changes"
+   ```
+
+#### Push to Fork
+
+```bash
+git push origin feature/your-feature-name
+```
+
+#### Create Pull Request
+
+1. Visit the original project's GitHub page
+2. Click "New Pull Request"
+3. Provide a clear PR description
+
+## Code Standards
+
+### Frontend Code
+
+- Use TypeScript strict mode
+- Follow ESLint rules
+- Use Prettier to format code
+- Use PascalCase for component naming
+- File names match component names
+
+### Backend Code
+
+- Follow Rust naming conventions
+- Use `cargo fmt` to format code
+- Use `cargo clippy` to check code quality
+- Add necessary comments and documentation
+
+### Commit Messages
+
+Use clear commit message format:
+
+```
+<type>: <description>
+
+[optional body]
+```
+
+Types:
+- `Add:` - New feature
+- `Fix:` - Bug fix
+- `Update:` - Update feature
+- `Docs:` - Documentation update
+- `Refactor:` - Code refactoring
+- `Test:` - Add tests
+- `Chore:` - Other changes
+
+## Documentation Contributions
+
+### Improve Documentation
+
+1. Fork the project
+2. Edit documentation in the `docs/` directory
+3. Submit a Pull Request
+
+### Documentation Standards
+
+- Use clear headings
+- Provide code examples
+- Add appropriate links
+- Use correct Markdown syntax
+
+## Development Workflow
+
+### Before Development
+
+1. Check existing Issues
+2. Comment on the Issue you want to handle
+3. Wait for maintainer confirmation
+
+### During Development
+
+1. Follow code standards
+2. Write tests (if needed)
+3. Update related documentation
+
+### After Development
+
+1. Self-test the code
+2. Ensure build passes
+3. Submit PR and describe changes
+
+## Get Help
+
+### Community Support
+
+- [GitHub Discussions](https://github.com/shenjianZ/keycast-windows/discussions)
+- [Issues](https://github.com/shenjianZ/keycast-windows/issues)
+
+### Contact
+
+Email: `15202078626@163.com`
+
+
+**Thank you for your contribution!**
+
+Every contribution makes Keycast Windows better.
+
+# /en/docs/development/development-environment
+
+---
+title: "Development Environment"
+description: "Keycast Windows development environment setup guide"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# Development Environment
+
+Set up your development environment to build and run Keycast Windows.
+
+## System Requirements
+
+### Operating System
+
+- **Windows 10** (version 1809 or higher)
+- **Windows 11**
+
+### Required Software
+
+<BadgeList>
+  <BadgeList.Badge variant="success">Node.js 18+</BadgeList.Badge>
+  <BadgeList.Badge variant="success">pnpm 9+</BadgeList.Badge>
+  <BadgeList.Badge variant="success">Rust 1.70+</BadgeList.Badge>
+  <BadgeList.Badge variant="success">Git</BadgeList.Badge>
+</BadgeList>
+
+## Install Node.js
+
+### Download and Install
+
+1. Visit [nodejs.org](https://nodejs.org/)
+2. Download the LTS version
+3. Run the installer
+
+### Verify Installation
+
+```bash
+node --version
+npm --version
+```
+
+## Install pnpm
+
+### Install using npm
+
+```bash
+npm install -g pnpm
+```
+
+### Verify Installation
+
+```bash
+pnpm --version
+```
+
+## Install Rust
+
+### Install using rustup
+
+1. Visit [rustup.rs](https://rustup.rs/)
+2. Download rustup-init.exe
+3. Run the installer
+
+### Verify Installation
+
+```bash
+rustc --version
+cargo --version
+```
+
+<Alert type="info">
+Rust first-time installation will download necessary components and may take a few minutes.
+</Alert>
+
+## Install Git
+
+### Download and Install
+
+1. Visit [git-scm.com](https://git-scm.com/)
+2. Download the Windows version
+3. Run the installer
+
+### Verify Installation
+
+```bash
+git --version
+```
+
+## Clone Project
+
+```bash
+git clone https://github.com/shenjianZ/keycast-windows.git
+cd keycast-windows
+```
+
+## Install Dependencies
+
+### Frontend Dependencies
+
+```bash
+pnpm install
+```
+
+### Rust Dependencies
+
+Rust dependencies will be built automatically, first run may take longer.
+
+## Recommended IDE
+
+### Zed
+
+Recommended extensions:
+
+<BadgeList>
+  <BadgeList.Badge variant="info">rust-analyzer</BadgeList.Badge>
+  <BadgeList.Badge variant="info">ESLint</BadgeList.Badge>
+  <BadgeList.Badge variant="info">Prettier</BadgeList.Badge>
+  <BadgeList.Badge variant="info">Tailwind CSS IntelliSense</BadgeList.Badge>
+</BadgeList>
+
+
+## Environment Variables
+
+To test automatic updates, you need to inject the environment variable `KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY`
+
+```powershell
+pnpm tauri signer generate -w $HOME/.tauri/keycast-windows.key
+```
+
+- Mapping after generation:
+  - `$HOME/.tauri/keycast-windows.key.pub` file content → `KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY`
+  - `$HOME/.tauri/keycast-windows.key` file content → `KEYCAST_WINDOWS_TAURI_SIGNING_PRIVATE_KEY`
+  - Password entered when generating the private key → `KEYCAST_WINDOWS_TAURI_SIGNING_PRIVATE_KEY_PASSWORD`
+- Release will additionally upload `latest.json`, Windows `setup.exe` and corresponding `.exe.sig` files for in-app updates.
+
+```powershell
+[Environment]::SetEnvironmentVariable(
+  "KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY",
+  (Get-Content $HOME\.tauri\keycast-windows.key.pub -Raw).Trim(),
+  "User"
+)
+```
+
+- Check if written successfully:
+
+```powershell
+[Environment]::GetEnvironmentVariable(
+  "KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY",
+  "User"
+)
+```
+
+- Delete the variable:
+
+```powershell
+[Environment]::SetEnvironmentVariable(
+  "KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY",
+  $null,
+  "User"
+)
+```
+
+- After setting or deleting, open a new terminal window before running `pnpm tauri dev`.
+
+## Verify Environment
+
+Run the following commands to verify environment configuration:
+
+```bash
+# Check Node.js
+node --version
+
+# Check pnpm
+pnpm --version
+
+# Check Rust
+rustc --version
+cargo --version
+
+# Check Git
+git --version
+```
+
+**Next Step**: Learn how to [run locally](docs/development/local-development) the project.
+
+# /en/docs/development/introduction
+
+# Project Introduction
+
+Keycast Windows is a desktop application built with a modern tech stack, providing professional keystroke overlay functionality for Windows users.
+
+## Project Overview
+
+Keycast Windows adopts a frontend-backend separation architecture:
+- **Frontend**: Built with React 19 + TypeScript + Tailwind CSS for the user interface
+- **Backend**: Built with Rust + Tauri 2 for system-level functionality
+- **Communication**: Frontend-backend communication through Tauri's event system
+
+## Tech Stack
+
+### Frontend Tech Stack
+
+- **React 19** - User interface framework
+- **TypeScript** - Type-safe JavaScript
+- **Tailwind CSS v4** - Atomic CSS framework
+- **Radix UI** - Headless component library
+- **React Router DOM** - Route management
+- **Vite** - Fast build tool
+
+### Backend Tech Stack
+
+- **Rust** - System-level programming language
+- **Tauri 2** - Cross-platform desktop application framework
+- **Windows API** - Windows system calls
+- **serde** - Serialization/deserialization framework
+- **chrono** - Time handling library
+
+### System Dependencies
+
+- Tauri plugin system
+- Windows API (user32.dll)
+- System tray integration
+- Global hotkey registration
+
+## Architecture Design
+
+### Frontend Architecture
+
+```
+src/
+├── lib/              # Utility library
+│   ├── utils.ts      # Utility functions
+│   ├── types.ts      # Type definitions
+│   ├── native.ts     # Tauri API wrapper
+│   └── updater.ts    # Update logic
+├── components/       # UI components
+│   └── ui/          # Radix UI base components
+├── pages/          # Page components
+├── App.tsx         # App entry
+└── main.tsx        # React root component
+```
+
+### Backend Architecture
+
+```
+src-tauri/src/
+├── main.rs          # Application entry
+├── commands/        # Tauri commands
+│   ├── app_commands.rs
+│   └── keycast_commands.rs
+└── services/        # Business logic
+    ├── keycast_service.rs
+    ├── app_settings_service.rs
+    └── window_service.rs
+```
+
+## Core Modules
+
+### Keystroke Monitoring System (KeycastService)
+
+- Uses Windows API to listen for global keystrokes
+- Supports 6 display modes
+- High-performance keystroke state tracking
+- Memory management and performance optimization
+
+### Configuration Management System
+
+- Keystroke display configuration (KeycastOverlayConfig)
+- Application settings management (AppSettingsService)
+- Persistent storage
+- Real-time configuration synchronization
+
+### User Interface
+
+- Responsive design
+- Dark/light themes
+- Internationalization support (Chinese and English)
+- Accessibility features
+
+## Development Philosophy
+
+### Design Principles
+
+1. **Simple and Efficient** - Lightweight design that doesn't affect system performance
+2. **User-Friendly** - Intuitive interface, easy to configure
+3. **Highly Customizable** - Rich configuration options
+4. **Cross-Platform Ready** - Using Tauri to prepare for future cross-platform support
+
+### Code Standards
+
+- TypeScript strict mode
+- Rust best practices
+- Clear code comments
+- Modular design
+
+## Version History
+
+See [Changelog](https://github.com/shenjianZ/keycast-windows/releases) for detailed version history.
+
+
+**Next Step**: Learn detailed [Tech Stack](/docs/development/tech-stack) information.
+
+# /en/docs/development/local-development
+
+---
+title: "Local Development"
+description: "Keycast Windows local development running guide"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# Local Development
+
+Run Keycast Windows locally for development and debugging.
+
+## Development Mode
+
+### Start Development Server
+
+```bash
+pnpm tauri dev
+```
+
+This command will:
+1. Start the Vite development server
+2. Compile Rust backend code
+3. Open the application window
+
+### Hot Reload
+
+- **Frontend**: Modifying React/TypeScript code will automatically hot reload
+- **Backend**: Modifying Rust code will automatically recompile
+
+## Development Commands
+
+### Common Commands
+
+- Start development mode
+    ```bash
+    pnpm tauri dev
+    ```
+- Build release version
+    ```bash
+    pnpm tauri build
+    ```
+- Check Rust code
+    ```bash
+    cargo check
+    ```
+- Sync all project version numbers
+    ```bash
+    pnpm version:sync 0.1.4
+    ```
+- Format frontend code
+    ```bash
+    pnpm format
+    ```
+- Format Rust code
+    ```bash
+    cargo fmt
+    ```
+
+### Development Debugging
+
+#### Frontend Debugging
+
+1. Open browser developer tools
+2. Press `F12` in the application window
+3. View console output and network requests
+
+#### Backend Debugging
+
+1. View Rust compilation output in terminal
+2. Use `println!` macro to output debug information
+3. View Tauri logs
+
+## File Watching
+
+### Automatic Recompilation
+
+Changes to the following files will trigger recompilation:
+
+- `src/` - React/TypeScript source code
+- `src-tauri/src/` - Rust source code
+- `src-tauri/Cargo.toml` - Rust dependencies
+
+### No Restart Required
+
+Modifying the following files does not require recompilation:
+
+- Style files
+- Static assets
+- Configuration files
+
+## Common Issues
+
+### Compilation Errors
+
+<Alert type="warning">
+Rust compilation failed
+
+Ensure Rust toolchain is correctly installed:
+```bash
+rustup update
+```
+</Alert>
+
+### Dependency Issues
+
+<Alert type="warning">
+Dependency installation failed
+
+Try cleaning and reinstalling:
+```bash
+rm -rf node_modules
+rm pnpm-lock.yaml
+pnpm install
+```
+</Alert>
+
+### Permission Issues
+
+<Alert type="warning">
+Windows Defender blocking
+
+Add the project directory to Windows Defender exclusion list.
+
+</Alert>
+
+
+## Performance Optimization
+
+### Speed Up Compilation
+
+1. Use SSD for project storage
+2. Close unnecessary antivirus software
+3. Increase system memory
+
+### Reduce Recompilation
+
+- Run after batch code modifications
+- Avoid frequent saves
+
+## Development Tips
+
+
+### Use TypeScript Type Hints
+
+Take full advantage of TypeScript's type hints and auto-completion.
+
+
+### Use Git Branches
+
+Use feature branches for development, keep the main branch stable.
+</Callout>
+
+
+### Commit Code Frequently
+
+Commit code frequently for easy rollback and version management.
+
+
+**Next Step**: Learn how to [build and package](docs/development/building) the application.
+
+# /en/docs/development/project-structure
+
+# Project Structure
+
+Keycast Windows adopts a clear modular structure for easy development and maintenance.
+
+## Directory Structure
+
+```
+keycast-windows/
+├── src/                    # React frontend source code
+│   ├── lib/               # Utility library
+│   ├── components/        # UI components
+│   ├── pages/            # Page components
+│   ├── App.tsx           # App entry
+│   └── main.tsx          # React root component
+├── src-tauri/            # Tauri backend source code
+│   ├── src/              # Rust source code
+│   │   ├── main.rs       # Entry file
+│   │   ├── commands/     # Tauri commands
+│   │   └── services/    # Business logic
+│   ├── Cargo.toml        # Rust dependency configuration
+│   └── tauri.conf.json   # Tauri app configuration
+├── docs/                 # Documentation website
+│   ├── public/           # Documentation content
+│   ├── src/              # Documentation source code
+│   └── package.json      # Documentation dependencies
+├── keycast.html          # Keystroke overlay window
+└── package.json         # Frontend dependency configuration
+```
+
+## Frontend Structure
+
+### lib/ Directory
+
+```
+lib/
+├── utils.ts              # Utility functions
+├── types.ts              # TypeScript type definitions
+├── native.ts             # Tauri API wrapper
+└── updater.ts            # Update logic
+```
+
+- **utils.ts** - Common utility functions
+- **types.ts** - Global type definitions
+- **native.ts** - Tauri invoke API wrapper
+- **updater.ts** - Automatic update state management
+
+### components/ Directory
+
+```
+components/
+├── ui/                   # Radix UI base components
+├── AppShell.tsx         # Application framework
+├── SettingsGroup.tsx    # Settings group component
+└── [other components...]
+```
+
+### pages/ Directory
+
+```
+pages/
+├── SettingsPage.tsx     # Settings page
+└── AboutPage.tsx        # About page
+```
+
+## Backend Structure
+
+### src/ Directory
+
+```
+src/
+├── main.rs              # Application entry
+├── commands/            # Tauri commands
+│   ├── app_commands.rs         # Application settings commands
+│   └── keycast_commands.rs     # Keystroke monitoring commands
+└── services/            # Business logic services
+    ├── keycast_service.rs      # Keystroke monitoring core
+    ├── app_settings_service.rs # Application settings management
+    └── window_service.rs       # Window and tray management
+```
+
+### Configuration Files
+
+- **Cargo.toml** - Rust dependencies and package configuration
+- **tauri.conf.json** - Tauri app configuration (window, plugins, etc.)
+- **build.rs** - Build script (if needed)
+
+## Documentation Structure
+
+```
+docs/
+├── public/
+│   ├── config/          # Configuration files
+│   └── docs/           # Documentation content
+├── src/
+│   └── components/     # Custom MDX components
+└── package.json        # Documentation dependencies
+```
+
+## File Naming Conventions
+
+### React Components
+
+- PascalCase: `SettingsPage.tsx`, `AppShell.tsx`
+- Component file names match component names
+
+### Rust Modules
+
+- snake_case: `keycast_service.rs`, `app_commands.rs`
+- Module file names match module names
+
+### Documentation Files
+
+- kebab-case: `display-modes.md`, `tech-stack.md`
+- Use lowercase letters and hyphens
+
+**Next Step**: Learn about [Development Environment](docs/development/development-environment) configuration.
+
+# /en/docs/development/tech-stack
+
+# Tech Stack
+
+Keycast Windows adopts a modern tech stack to provide users with a stable and efficient desktop application experience.
+
+## Frontend Tech Stack
+
+### Core Frameworks
+
+- **React 19** - User interface framework
+- **TypeScript** - Type-safe JavaScript
+- **Vite** - Fast build tool
+
+### UI Components
+
+- **Radix UI** - Headless component library providing accessible UI primitives
+- **Tailwind CSS v4** - Atomic CSS framework
+- **Lucide React** - Beautiful icon library
+
+### Routing and State
+
+- **React Router DOM v7** - Client-side routing
+- **React Hooks** - State management and side effect handling
+
+## Backend Tech Stack
+
+### Core Technologies
+
+- **Rust** - System-level programming language providing memory safety and performance
+- **Tauri 2** - Cross-platform desktop application framework
+
+### Windows Integration
+
+- **Windows API** - Calling system APIs through winapi crate
+- **GetAsyncKeyState** - Global keystroke monitoring
+
+### Data Processing
+
+- **serde** - Serialization/deserialization framework
+- **chrono** - Date and time handling
+
+## Tauri Plugins
+
+### Official Plugins
+
+- **tauri-plugin-opener** - Open external links
+- **tauri-plugin-autostart** - Auto-start on boot management
+- **tauri-plugin-global-shortcut** - Global hotkeys
+- **tauri-plugin-updater** - Automatic update system
+
+## Development Tools
+
+### Package Manager
+
+- **pnpm** - Fast, disk-space-saving package manager
+
+### Code Quality
+
+- **TypeScript strict mode** - Strict type checking
+- **ESLint** - Code linting
+- **Prettier** - Code formatting
+
+## Architecture Features
+
+### Frontend-Backend Separation
+
+- Frontend: React + TypeScript running in WebView
+- Backend: Rust handles system-level operations
+- Communication: Frontend-backend communication through Tauri's event system
+
+### Type Safety
+
+- Frontend and backend share TypeScript type definitions
+- Rust's type system ensures backend safety
+- Tauri automatically generates type-safe API bindings
+
+### Performance Optimization
+
+- Rust zero-cost abstractions
+- Minimized package size
+- Fast startup and response
+
+
+**Next Step**: Learn about [Project Structure](docs/development/project-structure).
+
+# /en/docs/development
+
+# Development Guide
+
+This section is for developers, introducing the project's tech stack and development guide.
+
+## Section Contents
+
+- [Introduction](docs/development/introduction)
+- [Tech Stack](docs/development/tech-stack)
+- [Project Structure](docs/development/project-structure)
+- [Development Environment](docs/development/development-environment)
+- [Local Development](docs/development/local-development)
+- [Building](docs/development/building)
+- [Contributing](docs/development/contributing)
+
+# /en/docs/getting-started/basic-usage
+
+# Basic Usage
+
+## Start Keystroke Monitoring
+
+> Keystroke monitoring is enabled by default in keycast
+
+- Click the keystroke monitoring toggle button in the main window settings interface
+- Use the global hotkey (default: Ctrl+Shift+K)
+
+
+## View Keystroke Display
+
+After enabling keystroke monitoring, try the following operations:
+
+- Press `Ctrl+C` - Display combo keys
+- Press `A` `S` `D` - Display according to the display mode
+- Press `Ctrl+Shift+Esc` - Display complex combo keys
+
+The overlay window will display keystroke information in real-time.
+
+## Stop Keystroke Monitoring
+
+- Click the keystroke monitoring toggle button in the main window settings interface
+- Use the global hotkey (default: Ctrl+Shift+K)
+
+
+## Exit the Application
+
+Close the main window: Click the close button (×) on the main window, and the application will minimize to the tray.
+
+To completely exit the software, right-click the tray icon and select **"Exit"**
+
+Next Step: See [Configuration Basics](/docs/getting-started/configuration) to learn how to customize keystroke display.
+
+# /en/docs/getting-started/configuration
+
+---
+title: "Configuration Basics"
+description: "Basic configuration guide for Keycast Windows"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# Configuration Basics
+
+> Click **Settings** on the left side of the main window to switch to the settings interface
+
+## Style Configuration
+
+1. Select Theme
+    Choose a preset theme from the **Theme** dropdown menu.
+
+    **Recommended**: For screen recording scenarios, the `text-only` or `minimal-light` themes are recommended to maintain simplicity and clarity.
+
+2. Customize Colors
+
+    1. Click the **"Text Color"** color block to select a custom color
+    2. Enable **"Show Lines"** to display accent lines
+    3. Click the **"Line Color"** color block to enter a hexadecimal color code (e.g., `#FF5733`)
+
+### Adjust Position
+
+Drag the **X** and **Y** sliders to adjust the overlay window position:
+
+- **X**: Horizontal position (0 = left side of screen, higher values move right)
+- **Y**: Vertical position (0 = top of screen, higher values move down)
+
+You can preview the position adjustment in real-time after enabling keystroke monitoring.
+
+
+## Display Mode Configuration
+
+### Select Display Mode
+
+<Callout variant="primary">
+    It is recommended to start with Combo Keys First mode, which is suitable for most usage scenarios.
+</Callout>
+
+Select from the **Display Mode** dropdown menu:
+
+<BadgeList>
+  <BadgeList.Badge variant="primary">Combo Keys Only</BadgeList.Badge>
+  <BadgeList.Badge variant="primary">Single Keys Only</BadgeList.Badge>
+  <BadgeList.Badge variant="primary">Combo Keys First</BadgeList.Badge>
+  <BadgeList.Badge variant="success">All Keys Continuous</BadgeList.Badge>
+  <BadgeList.Badge variant="success">All Keys Queued</BadgeList.Badge>
+  <BadgeList.Badge variant="success">Smart Hybrid</BadgeList.Badge>
+</BadgeList>
+
+
+### Adjust Combo Window
+
+The **"Combo Window"** parameter controls how long key presses within will be merged into combo keys:
+
+- Default value: `500 ms`
+- Recommended range: `300-800 ms`
+- **Too small**: May split rapidly pressed combo keys
+- **Too large**: May incorrectly merge separate key presses
+
+## System Configuration
+
+### Auto-start on Boot
+
+Enable the **Auto-start on Boot** option, and the application will automatically start when Windows logs in:
+
+<Alert type="success">
+After closing the main window, the application will remain in the system tray and can be reopened through the tray icon.
+</Alert>
+
+### Language Switching
+
+Select from the **"Language"** dropdown menu:
+
+- **Follow System** - Automatically switch based on system language
+- **Simplified Chinese** - Force Chinese interface
+- **English** - Force English interface
+
+
+**Next Step**: See [User Guide](/docs/user-guide/overview) for more configuration options.
+
+# /en/docs/getting-started/installation
+
+---
+title: "Installation"
+description: "Installation guide for Keycast Windows"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# Installation
+
+## System Requirements
+
+<Alert type="warning">
+Operating System: Windows 10 (version 1809) or Windows 11 (64-bit)
+
+Memory: At least 4 GB RAM
+
+Disk Space: Approximately 50 MB of available space
+
+</Alert>
+
+## Download Methods
+
+### Official Channels
+
+It is recommended to download the latest version from the GitHub Releases page:
+
+
+Visit the [Releases page](https://github.com/shenjianZ//keycast-windows/releases) to download:
+- `keycast-windows-setup-x.x.x.exe` - Installer (recommended)
+
+Double-click to run `keycast-windows-setup-x.x.x.exe` and follow the wizard to complete the installation
+
+<Callout variant="primary">
+Note: The installer will automatically configure Windows Firewall rules to allow the application to listen for keyboard input.
+</Callout>
+
+
+## Verify Installation
+
+After launching the application, the Keycast icon will appear in the system tray
+
+Next Step: See [Basic Usage](/docs/getting-started/basic-usage) to learn how to get started.
+
+# /en/docs/getting-started
+
+# Getting Started
+
+Welcome to Keycast Windows! This section will help you quickly install and configure the application.
+
+## Section Contents
+
+- [Installation](docs/getting-started/installation)
+- [Basic Usage](docs/getting-started/basic-usage)
+- [Configuration Basics](docs/getting-started/configuration)
+
+# /en/docs/user-guide/display-modes
+
+---
+title: "Display Modes"
+description: "Introduction to the six display modes of Keycast Windows"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# Display Modes
+
+Keycast Windows provides 6 display modes, each optimized for specific usage scenarios.
+
+## Mode Overview
+
+<BadgeList>
+  <BadgeList.Badge variant="primary">Combo Keys Only</BadgeList.Badge>
+  <BadgeList.Badge variant="primary">Single Keys Only</BadgeList.Badge>
+  <BadgeList.Badge variant="primary">Combo Keys First</BadgeList.Badge>
+  <BadgeList.Badge variant="success">All Keys Continuous</BadgeList.Badge>
+  <BadgeList.Badge variant="success">All Keys Queued</BadgeList.Badge>
+  <BadgeList.Badge variant="success">Smart Hybrid</BadgeList.Badge>
+</BadgeList>
+
+## Quick Selection Guide
+
+- Software tutorials/demos: Use **Combo Keys Only** mode to highlight shortcut operations.
+- Typing teaching/password input: Use **Single Keys Only** mode to clearly show input content.
+- Gaming/fast operations: Use **All Keys Continuous** mode to fully record key sequences.
+- Long operation recording: Use **All Keys Queued** mode to persistently display operation history.
+- General scenarios: Use **Combo Keys First** mode, the most adaptable.
+- Advanced users: Use **Smart Hybrid** mode for the best adaptive experience.
+
+
+## Mode Introduction
+
+### 1. Combo Keys Only (combo-only)
+
+Only displays combo keys containing modifier keys, ignoring individual letters, numbers, and symbol keys.
+
+**Examples**:
+- `Ctrl+C` → Display
+- `A` → Don't display
+
+**Use Case**: Software shortcut key demos
+
+### 2. Single Keys Only (single-only)
+
+Only displays individual letters, numbers, and symbol keys, ignoring modifier key combinations.
+
+**Examples**:
+- `A` → Display
+- `Ctrl+C` → Don't display
+
+**Use Case**: Typing teaching, password input demos
+
+### 3. Combo Keys First (combo-precedence)
+
+Prioritizes combo keys, displays single keys when no combo keys are present.
+
+**Examples**:
+- `Ctrl+C` → Display
+- `A` → Display
+
+**Use Case**: General scenarios, most adaptable
+
+### 4. All Keys Continuous (all-sequential)
+
+Displays all keys, shows in scroll direction when keys are pressed continuously.
+
+**Examples**:
+- `Ctrl+C` `A` `S` `D` → Display all
+
+**Use Case**: Gaming operations, fast typing
+
+### 5. All Keys Queued (all-sequential-persistent)
+
+Displays all keys, persists until timeout.
+
+**Examples**:
+- Input `Ctrl+C` `A` `S` `D` → Persistent display
+- Wait for timeout → Clear
+
+**Use Case**: Long operation recording
+
+### 6. Smart Hybrid (smart-mixed)
+
+Automatically switches modes based on typing rhythm.
+
+**Examples**:
+- Slow typing → Display individually
+- Fast typing → Display continuously
+
+**Use Case**: Adaptive scenarios
+
+
+**Next Step**: Learn how to configure [Theme Styles](/docs/user-guide/themes).
+
+# /en/docs/user-guide/overview
+
+# Overview
+
+Keycast Windows is a fully-featured keystroke overlay tool. Here is an overview of the core features.
+
+## Core Features
+
+### 1. Keystroke Monitoring System
+
+Global keyboard input monitoring that captures all key events and displays them in real-time.
+
+### 2. Display Mode System
+
+Provides 6 display modes to adapt to different usage scenarios:
+
+- **Combo Keys Only** - Only displays modifier key combinations like `Ctrl`, `Alt`, `Shift`, `Win`
+- **Single Keys Only** - Only displays individual letters, numbers, and symbol keys
+- **Combo Keys First** - Prioritizes combo keys, displays single keys when no combo is present
+- **All Keys Continuous** - Displays all keys, scrolls horizontally or vertically when keys are pressed continuously
+- **All Keys Queued** - Displays all keys, persists until timeout
+- **Smart Hybrid** - Intelligently switches display modes based on typing rhythm
+
+See: [Display Modes Explained](/docs/advanced/display-modes)
+
+### 3. Theme System
+
+12 carefully designed preset themes covering different styles:
+
+**Keyboard Cap Style**:
+- `keycaps-dark` - Dark keyboard cap style
+- `keycaps-light` - Light keyboard cap style
+
+**Minimalist Style**:
+- `text-only` - Pure text, no background
+- `minimal-light` - Minimalist light theme
+
+**Broadcast Style**:
+- `broadcast-orange` - Orange broadcast style
+- `broadcast-green` - Green broadcast style
+
+**Glass Texture**:
+- `glass-soft` - Soft glass effect
+- `fresh-mint` - Fresh mint style
+- `sky-card` - Sky card style
+
+**Special Style**:
+- `terminal` - Terminal style
+- `neon-cyan` - Neon cyan
+- `paper-card` - Paper card
+
+See: [Theme Configuration](/docs/user-guide/themes)
+
+### 4. Custom Styles
+
+- **Text Color** - Customize text color (RGB/HEX)
+- **Line Color** - Customize accent line color
+- **Show Lines** - Control whether to display accent lines
+
+### 5. Position and Time Configuration
+
+- **X/Y Position** - Precisely adjust overlay window position
+- **Combo Window** - Time window for merging combo keys
+- **Continuous Key Window** - Continuous determination time in smart hybrid mode
+- **Queue Idle Timeout** - Clear timeout in queue mode
+
+### 6. Scrolling and Counting
+
+- **Scroll Direction** - Horizontal, vertical, or fade in/out
+- **Max Keys to Display** - Control display count during continuous key presses
+- **Show Key Count** - Display key count during continuous display
+
+## System Features
+
+### 1. Global Hotkeys
+
+- Customize system-level hotkeys
+- Quickly toggle keystroke monitoring status
+- Default hotkey: `Ctrl+Shift+K`
+
+See: [Shortcut Settings](/docs/user-guide/shortcuts)
+
+### 2. Tray Integration
+
+- Minimize to system tray
+- Tray icon right-click menu
+- Tray icon status indication (active/standby)
+
+### 3. Auto-start on Boot
+
+- Supports automatic startup on boot
+- Works with tray mode for background operation
+
+### 4. Internationalization
+
+- Built-in Chinese and English interfaces
+- Supports following system language
+- Real-time switching without restart
+
+### 5. Auto-update
+
+- Silent update check on startup
+- In-app download of update packages
+- One-click update installation
+
+See: [Update Management](/docs/user-guide/updates)
+
+## Interface Themes
+
+- **Light Theme** - Bright application interface
+- **Dark Theme** - Eye-friendly application interface
+- **Follow System** - Automatically adapt to system theme
+
+## Use Cases
+
+### 📹 Video Production
+
+- Software tutorial recording
+- Product demo videos
+- Technical sharing videos
+
+### 💼 Remote Collaboration
+
+- Online technical demos
+- Remote training and teaching
+- Product presentation meetings
+
+### 🎮 Content Creation
+
+- Game streaming
+- Software teaching streaming
+- Skill sharing streaming
+
+### 🎓 Education and Training
+
+- Software operation training
+- Programming teaching
+- Technical lectures
+
+
+**Next Step**: Choose the appropriate [display mode](/docs/user-guide/display-modes) and [theme](/docs/user-guide/themes) based on your usage scenario.
+
+# /en/docs/user-guide/position
+
+# Position Settings
+
+Adjust the position of the overlay window on the screen to fit your workflow.
+
+## Position Configuration
+
+In the **"Position & Rhythm"** section of the settings page, you can adjust:
+
+### X Coordinate
+
+- **Range**: 0 to screen width
+- **Description**: Horizontal position of the overlay window, 0 represents the left edge of the screen
+
+### Y Coordinate
+
+- **Range**: 0 to screen height
+- **Description**: Vertical position of the overlay window, 0 represents the top edge of the screen
+
+## Common Position Settings
+
+
+- Screen Recording Scenario
+
+    It is recommended to place the overlay at the top center of the screen to avoid blocking important content.
+
+    **Recommended Settings**: X=700, Y=24
+
+- Live Streaming Scenario
+
+    Can be placed in the corner of the screen without interfering with the game or application interface.
+
+    **Recommended Settings**: X=24, Y=24
+
+- Presentation Scenario
+
+    Place at the top center of the screen for clear visibility.
+
+    **Recommended Settings**: X=700, Y=24
+
+
+## Real-time Preview
+
+After enabling keystroke monitoring, adjusting the position sliders allows you to preview the effect in real-time, making it easy to find the most suitable position.
+
+
+**Next Step**: Learn how to configure [Shortcut Settings](docs/user-guide/shortcuts).
+
+# /en/docs/user-guide/shortcuts
+
+---
+title: "Shortcuts"
+description: "Configure global hotkeys to quickly toggle keystroke monitoring"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# Shortcut Settings
+
+Use global hotkeys to quickly toggle keystroke monitoring status without opening the main window.
+
+The default global hotkey for keystroke monitoring is `Ctrl+Shift+K`
+
+### Customize Keystroke Monitoring Hotkey
+
+<Alert type="info">
+Hotkeys must contain at least one modifier key (Ctrl, Alt, Shift, or Win).
+</Alert>
+On the settings page:
+
+1. Enable **Enable Global Hotkey**
+2. Click the **Start Recording** button
+3. Press your desired key combination, release to complete recording
+
+
+## Hotkey Function
+
+When the keystroke monitoring hotkey is pressed:
+- If keystroke monitoring is disabled → Enable monitoring
+- If keystroke monitoring is enabled → Stop monitoring
+
+A notification will appear on screen indicating the current status.
+
+## Disable Hotkey
+
+If you don't need the global hotkey function for keystroke monitoring:
+
+1. Find **Global Hotkey** on the settings page
+2. Uncheck **Enable Global Hotkey"**
+
+## Reset to Default
+
+Click the **Default** button to reset the hotkey to `Ctrl+Shift+K`.
+
+## Use Cases
+
+<BadgeList>
+  <BadgeList.Badge variant="primary">Quick start during recording</BadgeList.Badge>
+  <BadgeList.Badge variant="warning">Toggle anytime during streaming</BadgeList.Badge>
+  <BadgeList.Badge variant="success">Flexible control during presentations</BadgeList.Badge>
+</BadgeList>
+
+**Next Step**: Learn about [System Settings](docs/user-guide/system-settings).
+
+# /en/docs/user-guide/system-settings
+
+---
+title: "System Settings"
+description: "Keycast Windows system settings description"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# System Settings
+
+Configure application behavior and system integration options.
+
+## Auto-start on Boot
+
+### Feature Description
+
+When enabled, Keycast Windows will automatically start when the system logs in.
+
+### How to Configure
+
+In the **Startup** section of the settings page:
+
+1. Check the **Auto-start on Boot** option
+
+<Alert type="success">
+After enabling auto-start, the application will run in the background and can be accessed through the system tray icon.
+</Alert>
+
+### Tray Integration
+
+Auto-start works with tray mode:
+- Application minimizes to system tray after startup
+- Does not take up taskbar space
+- Control application through tray icon
+
+## Language Settings
+
+### Supported Languages
+
+- **Simplified Chinese** (zh-CN)
+- **English** (en-US)
+- **Follow System** - Automatically switches based on system language
+
+### How to Switch
+
+In the **Language** section of the settings page:
+
+1. Click the **Language** dropdown menu
+2. Select your desired language
+
+
+<Alert type="success">
+Language switching takes effect immediately without restarting the application.
+</Alert>
+
+## Interface Theme
+
+### Theme Options
+
+- **Light** - Bright application interface
+- **Dark** - Eye-friendly application interface
+- **Follow System** - Automatically adapt to system theme
+
+### How to Switch
+
+In the **Style** section of the settings page:
+
+1. Click the **Theme** dropdown menu
+2. Select your desired theme
+
+## Monitor on Startup
+
+### Feature Description
+
+When enabled, the application will automatically start monitoring keyboard input on startup, without manually clicking the "Start" button.
+
+### How to Configure
+
+In the **Display** section of the settings page:
+
+1. Check the **Keystroke Monitoring** option
+
+<Callout variant="secondary">
+If both auto-start on boot and monitor on startup are enabled, keystroke monitoring will automatically start after system login.
+</Callout>
+
+## Settings Storage
+
+All settings are automatically saved to:
+```
+~/.keycast-windows/app-settings.json
+~/.keycast-windows/keycast-overlay.json
+```
+**Next Step**: Learn about [Update Management](docs/user-guide/updates).
+
+# /en/docs/user-guide/themes
+
+# Theme Configuration
+
+Keycast Windows provides 12 carefully designed preset themes covering different styles and scenarios.
+
+## Theme Categories
+
+### Keyboard Cap Style
+
+Simulates the visual effect of real keyboard keys.
+
+**keycaps-dark** - Dark keyboard cap style, suitable for recording with dark backgrounds
+
+**keycaps-light** - Light keyboard cap style, suitable for recording with light backgrounds
+
+### Minimalist Style
+
+Clean and pure visual design.
+
+**text-only** - Pure text display, no background, the cleanest style (recommended)
+
+**minimal-light** - Minimalist light theme, fresh and clean
+
+### Broadcast Style
+
+High contrast themes suitable for live streaming and screen recording scenarios.
+
+**broadcast-orange** - Orange broadcast style, high contrast, eye-catching (recommended)
+
+**broadcast-green** - Green broadcast style, eye-friendly and comfortable
+
+### Glass Texture
+
+Modern glassmorphism design style.
+
+**glass-soft** - Soft glass effect, full of modernity
+
+**fresh-mint** - Fresh mint style, comfortable and natural
+
+**sky-card** - Sky card style, light and transparent
+
+### Special Style
+
+Unique visual style themes.
+
+**terminal** - Terminal style, suitable for technical demos
+
+**neon-cyan** - Neon cyan, strong technological feel
+
+**paper-card** - Paper card style, warm and natural
+
+
+In addition to preset themes, you can also customize colors.
+
+## Text and Line Colors
+### Text Color
+
+Click the **Text Color** color block:
+- Supports selecting predefined colors
+- Supports color picker selection
+- Supports HEX color codes (e.g., `#FF5733`)
+
+### Line Color
+
+After enabling **Show Lines**, you can customize accent line colors:
+- Used to highlight key combinations
+- Recommended to use colors with high contrast to text color
+
+**Next Step**: Learn how to adjust [Position Settings](/docs/user-guide/position).
+
+# /en/docs/user-guide/updates
+
+---
+title: "Updates"
+description: "Keycast Windows automatic update system"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# Update Management
+
+Keycast Windows has a built-in automatic update system that makes it easy to get the latest features and fixes.
+
+## Automatic Updates
+
+### Check for Updates
+
+The application automatically checks for updates on startup:
+- Silent background check
+- Does not interfere with normal use
+- Shows notification when a new version is found
+
+### Update Process
+
+1. **Check for Updates** - Automatically checks on startup
+2. **Download Updates** - Shows download progress
+3. **Install Updates** - One-click install of update packages
+4. **Restart Application** - Complete the update
+
+<Alert type="info">
+After the update package is downloaded, you can choose an appropriate time to click the "Install Update" button.
+</Alert>
+
+## Update Status
+
+### Status Descriptions
+
+- **Checking...** - Connecting to update server
+- **New Version Found** - Update available, shows version number
+- **Downloading...** - Downloading update package, shows progress
+- **Downloaded** - Update package ready
+- **Up to Date** - No updates available
+- **Check Failed** - Network connection issue or server error
+- **Download Failed** - Network interruption or insufficient storage
+
+## Manual Check
+
+If you want to manually check for updates on startup:
+
+1. Open the main window
+2. Click the **Settings** button
+3. Click the **Check for Updates** button in the **App Updates** section
+
+## Update Configuration
+
+### Auto Check
+
+Enabled by default to automatically check on startup.
+
+### Disable Auto Check
+
+If you don't want to automatically check for updates, you can disable it in application settings.
+
+## Version History
+
+View update history:
+1. Visit [GitHub Releases](https://github.com/shenjianZ/keycast-windows/releases)
+2. View update content for each version
+
+## FAQ
+
+
+<BadgeList.Badge variant="error">Update failed?</BadgeList.Badge>
+Check network connection, ensure access to GitHub
+<BadgeList.Badge variant="error">Slow download?</BadgeList.Badge>
+May be a network issue, please retry later
+<BadgeList.Badge variant="error">Install failed?</BadgeList.Badge>
+Close the application and retry, or manually download and install
+
+# /en/docs/user-guide
+
+# User Guide
+
+This section introduces the features and usage of Keycast Windows.
+
+## Section Contents
+
+- [Overview](docs/user-guide/overview)
+- [Display Modes](docs/user-guide/display-modes)
+- [Themes](docs/user-guide/themes)
+- [Position Settings](docs/user-guide/position)
+- [Shortcuts](docs/user-guide/shortcuts)
+- [System Settings](docs/user-guide/system-settings)
+- [Updates](docs/user-guide/updates)
+
+# /en/docs
+
+# Documentation
+
+Welcome to the Keycast Windows documentation!
+
+## Documentation Index
+
+- [Getting Started](docs/getting-started/installation)
+- [User Guide](docs/user-guide)
+- [Advanced Features](docs/advanced)
+- [Development Guide](docs/development)
+
+# /en/index
+
+---
+title: "Keycast Windows"
+description: "A concise and efficient desktop keystroke overlay tool for Windows"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# Keycast Windows
+
+<Callout variant="primary">
+A concise and efficient desktop keystroke overlay tool for Windows, providing clear key feedback for screen recording, live streaming, presentations, and teaching.
+</Callout>
+
+
+- Lightweight transparent overlay window that doesn't interfere with desktop operations, perfectly adapted for screen recording and live streaming scenarios.
+
+- 12 preset themes, support for custom colors and line configurations to meet different visual needs.
+
+- 6 display modes, from simple combo keys to intelligent hybrid mode, adapting to various usage scenarios.
+
+- Comprehensive configuration options including position, time window, scroll direction, and more for a personalized key display experience.
+
+- Built-in Chinese and English interfaces with real-time language switching, friendly for international users.
+
+- Built-in automatic update system to get the latest features and fixes in a timely manner.
+
+
+## Quick Start
+
+<Alert type="info">
+System Requirements: Windows 10/11 (64-bit)
+</Alert>
+
+### Installation
+
+Download the latest installer from [GitHub Releases](https://github.com/shenjianZ/keycast-windows/releases) and run it.
+
+### Basic Usage
+
+1. After launching the application, click the **"Start"** button to enable keystroke monitoring
+2. Press any keyboard combination and the overlay window will display it in real-time
+3. Adjust themes, position, and display modes in the settings page
+4. Set global hotkeys to quickly toggle keystroke monitoring
+
+## Main Features
+
+### Display Modes
+
+Keycast Windows provides 6 display modes to meet different usage scenarios:
+
+<BadgeList>
+  <BadgeList.Badge variant="primary">Combo Keys Only</BadgeList.Badge>
+  <BadgeList.Badge variant="primary">Single Keys Only</BadgeList.Badge>
+  <BadgeList.Badge variant="primary">Combo Keys First</BadgeList.Badge>
+  <BadgeList.Badge variant="success">All Keys Continuous</BadgeList.Badge>
+  <BadgeList.Badge variant="success">All Keys Queued</BadgeList.Badge>
+  <BadgeList.Badge variant="success">Smart Hybrid</BadgeList.Badge>
+</BadgeList>
+
+For detailed information about each mode's use cases, see [Display Modes Explained](/docs/advanced/display-modes).
+
+### Theme System
+
+12 carefully designed preset themes:
+
+<BadgeList>
+  <BadgeList.Badge variant="default">keycaps-dark</BadgeList.Badge>
+  <BadgeList.Badge variant="default">keycaps-light</BadgeList.Badge>
+  <BadgeList.Badge variant="default">text-only</BadgeList.Badge>
+  <BadgeList.Badge variant="info">broadcast-orange</BadgeList.Badge>
+  <BadgeList.Badge variant="info">broadcast-green</BadgeList.Badge>
+  <BadgeList.Badge variant="warning">minimal-light</BadgeList.Badge>
+  <BadgeList.Badge variant="warning">glass-soft</BadgeList.Badge>
+  <BadgeList.Badge variant="warning">fresh-mint</BadgeList.Badge>
+  <BadgeList.Badge variant="success">sky-card</BadgeList.Badge>
+  <BadgeList.Badge variant="success">terminal</BadgeList.Badge>
+  <BadgeList.Badge variant="error">neon-cyan</BadgeList.Badge>
+  <BadgeList.Badge variant="error">paper-card</BadgeList.Badge>
+</BadgeList>
+
+Browse all theme effects at [Theme Configuration](/docs/user-guide/themes).
+
+## Use Cases
+
+<Callout variant="secondary">
+📹 Video Tutorials
+Clear key display helps viewers understand the workflow and improves tutorial quality.
+
+💻 Remote Demos
+Provides intuitive key feedback in technical demos and product presentations.
+
+🎮 Live Streaming
+Display shortcuts and operation tips during game streaming or software teaching.
+
+🎓 Software Training
+Assist in explaining software operation workflows in corporate training and teaching scenarios.
+
+</Callout>
+
+## Documentation Navigation
+
+- **[Getting Started](/docs/getting-started/installation)** - Download, installation, and basic configuration
+- **[User Guide](/docs/user-guide/overview)** - Feature introduction and configuration instructions
+- **[Advanced Features](/docs/advanced/display-modes)** - Display mode details and advanced configuration
+- **[Development Guide](/docs/development/introduction)** - Tech stack and development documentation
+
+## Open Source License
+
+[MIT License](https://github.com/shenjianZ/keycast-windows/blob/master/LICENSE) ·
+[GitHub](https://github.com/shenjianZ/keycast-windows) ·
+[Issue Tracker](https://github.com/shenjianZ/keycast-windows/issues)
+
+# /zh-cn/changelog/v0.1.6
+
+# v0.1.6
+
+## 文档站改进
+
+- 为 Keycast Windows 文档站启用并补充更新日志页面。
+- 统一文档 frontmatter 元数据字段，将 `date` 迁移为 `createdAt`。
+- 保留 `title`、`description`、`author` 等页面元信息，提升页面头部展示一致性。
+
+## 修复
+
+- 修复 Windows 环境下使用 `CRLF` 换行时，frontmatter 可能被当作正文直接渲染的问题。
+- 修复首页和文档页元数据展示不统一的问题。
+
+# /zh-cn/docs/advanced/display-modes
+
+# 显示模式详解
+
+Keycast Windows 提供 6 种显示模式，每种模式都针对特定的使用场景优化。
+
+## 模式对比表
+
+| 模式名称 | 说明 | 配置值 | 适用场景 |
+|---------|------|--------|---------|
+| 仅组合键 | 只显示包含修饰键的组合键 | `combo-only` | 快捷键演示 |
+| 仅单个按键 | 只显示单个字母、数字、符号键 | `single-only` | 打字演示 |
+| 组合键优先 | 优先显示组合键，无组合时显示单个按键 | `combo-precedence` | 通用场景 |
+| 所有按键连续 | 显示所有按键，连续按键时滚动显示 | `all-sequential` | 快速操作 |
+| 所有按键队列 | 显示所有按键，持久化直到超时 | `all-sequential-persistent` | 长时间记录 |
+| 智能混合 | 根据按键节奏自动切换模式 | `smart-mixed` | 自适应场景 |
+
+## 配置参数说明
+
+| 参数 | 说明 | 默认值 | 取值范围 |
+|------|------|--------|---------|
+| 组合窗口 | 控制组合键合并显示的时间窗口 | 500 ms | 300-800 ms |
+| 最多显示按键数 | 连续按键时最多显示的按键数量 | 5 | 3-20 |
+| 连续按键窗口 | 智能混合模式下判定为连续按键的时间窗口 | 400 ms | 200-800 ms |
+| 队列空闲超时 | 在**所有按键队列**模式下清空按键的超时时间 | 2000 ms | 200-5000 ms |
+| 滚动方向 | 连续按键超出最大数量时的滚动效果 | 淡入淡出 | 横向/纵向/淡入淡出 |
+
+
+---
+
+# /zh-cn/docs/advanced
+
+# 高级功能
+
+本章节详细介绍 Keycast Windows 的高级功能和配置选项。
+
+## 章节目录
+
+- [显示模式详解](docs/advanced/display-modes)
+
+# /zh-cn/docs/development/building
+
+---
+title: "构建打包"
+description: "Keycast Windows 构建和发布指南"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# 构建打包
+
+构建 Keycast Windows 的发布版本。
+
+## 构建命令
+
+### 完整构建
+
+```bash
+pnpm tauri build
+```
+
+这个命令会：
+1. 创建优化后的生产构建
+2. 编译 Rust 后端代码
+3. 打包成安装程序
+4. 生成可执行文件
+
+### 构建输出
+
+构建完成后，安装程序位于：
+```
+src-tauri/target/release/bundle/nsis/
+```
+
+文件名格式：
+- `keycast-windows_0.1.4_x64-setup.exe` - 安装程序
+
+## 构建选项
+
+### 仅构建不打包
+
+```bash
+pnpm tauri build --no-bundle
+```
+
+只生成可执行文件，不创建安装程序。
+
+### 指定目标平台
+
+```bash
+pnpm tauri build --target x86_64-pc-windows-msvc
+```
+
+## 代码检查
+
+### 检查 Rust 代码
+
+```bash
+cd src-tauri
+cargo check
+```
+
+### 运行测试
+
+```bash
+cd src-tauri
+cargo test
+```
+
+### 代码格式化
+
+```bash
+cd src-tauri
+cargo fmt
+```
+
+## 优化构建
+
+### 减小体积
+
+1. 启用 LTO（链接时优化）
+2. 使用 `--release` 模式
+3. 移除不必要的依赖
+
+### 加快构建
+
+1. 使用增量编译
+2. 并行编译
+3. 缓存依赖
+
+## 版本发布
+
+### 更新版本号
+
+修改以下文件：
+
+1. `package.json` - 前端版本
+2. `src-tauri/Cargo.toml` - Rust 版本
+3. `src-tauri/tauri.conf.json` - 应用版本
+
+也可以使用 `pnpm version:sync versionNumber` 意见更新版本号
+
+### 创建 Git 标签
+
+```bash
+git tag v0.1.4
+git push origin v0.1.4
+```
+
+### GitHub Actions
+
+配置 GitHub Actions 自动构建和发布，已经在 .github/workflows/build.yml 中配置
+
+## 发布检查清单
+
+<BadgeList>
+  <BadgeList.Badge variant="success">更新版本号</BadgeList.Badge>
+  <BadgeList.Badge variant="success">更新 CHANGELOG</BadgeList.Badge>
+  <BadgeList.Badge variant="success">运行测试</BadgeList.Badge>
+  <BadgeList.Badge variant="success">本地构建测试</BadgeList.Badge>
+  <BadgeList.Badge variant="success">创建 Git 标签</BadgeList.Badge>
+  <BadgeList.Badge variant="success">推送标签</BadgeList.Badge>
+</BadgeList>
+
+## 签名和公证
+
+### Windows 代码签名
+
+使用代码签名证书对应用程序进行签名：
+注意该签名证书需要购买，200-500 $/年
+
+```bash
+signtool sign /f certificate.pfx /p password keycast-windows.exe
+```
+
+### SmartScreen 警告
+
+首次发布的应用可能会被 Windows SmartScreen 警告，用户需要：
+1. 点击"更多信息"
+2. 选择"仍要运行"
+
+
+**下一步**: 了解如何 [贡献](docs/development/contributing) 项目。
+
+# /zh-cn/docs/development/contributing
+
+# 贡献指南
+
+感谢你考虑为 Keycast Windows 做出贡献！
+
+## 如何贡献
+
+### 报告问题
+
+发现 bug 或有功能建议？请：
+
+1. 访问 [Issues](https://github.com/shenjianZ/keycast-windows/issues)
+2. 搜索是否已有相关问题
+3. 创建新的 Issue，详细描述问题或建议
+
+### 提交代码
+
+#### Fork 项目
+
+1. Fork 项目到你的 GitHub 账户
+2. 克隆你的 Fork：
+   ```bash
+   git clone https://github.com/shenjianZ/keycast-windows.git
+   cd keycast-windows
+   ```
+
+#### 创建分支
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+#### 提交更改
+
+1. 进行代码修改
+2. 编写清晰的提交信息
+3. 提交代码：
+   ```bash
+   git add .
+   git commit -m "Add: 描述你的更改"
+   ```
+
+#### 推送到 Fork
+
+```bash
+git push origin feature/your-feature-name
+```
+
+#### 创建 Pull Request
+
+1. 访问原项目的 GitHub 页面
+2. 点击 "New Pull Request"
+3. 提供清晰的 PR 描述
+
+## 代码规范
+
+### 前端代码
+
+- 使用 TypeScript 严格模式
+- 遵循 ESLint 规则
+- 使用 Prettier 格式化代码
+- 组件使用 PascalCase 命名
+- 文件名与组件名一致
+
+### 后端代码
+
+- 遵循 Rust 命名规范
+- 使用 `cargo fmt` 格式化代码
+- 使用 `cargo clippy` 检查代码质量
+- 添加必要的注释和文档
+
+### 提交信息
+
+使用清晰的提交信息格式：
+
+```
+<type>: <description>
+
+[optional body]
+```
+
+类型：
+- `Add:` - 新功能
+- `Fix:` - 修复 bug
+- `Update:` - 更新功能
+- `Docs:` - 文档更新
+- `Refactor:` - 代码重构
+- `Test:` - 添加测试
+- `Chore:` - 其他更改
+
+## 文档贡献
+
+### 改进文档
+
+1. Fork 项目
+2. 编辑 `docs/` 目录下的文档
+3. 提交 Pull Request
+
+### 文档规范
+
+- 使用清晰的标题
+- 提供代码示例
+- 添加适当的链接
+- 使用正确的 Markdown 语法
+
+## 开发流程
+
+### 开发前
+
+1. 查看现有 Issues
+2. 评论你想处理的 Issue
+3. 等待维护者确认
+
+### 开发中
+
+1. 遵循代码规范
+2. 编写测试（如果需要）
+3. 更新相关文档
+
+### 开发后
+
+1. 自测代码
+2. 确保构建通过
+3. 提交 PR 并描述更改
+
+## 获取帮助
+
+### 社区支持
+
+- [GitHub Discussions](https://github.com/shenjianZ/keycast-windows/discussions)
+- [Issues](https://github.com/shenjianZ/keycast-windows/issues)
+
+### 联系方式
+
+Email: `15202078626@163.com`
+
+
+**感谢你的贡献！**
+
+每一个贡献都让 Keycast Windows 变得更好。
+
+# /zh-cn/docs/development/development-environment
+
+---
+title: "开发环境"
+description: "Keycast Windows 开发环境配置指南"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# 开发环境
+
+配置你的开发环境以构建和运行 Keycast Windows。
+
+## 系统要求
+
+### 操作系统
+
+- **Windows 10** (版本 1809 或更高)
+- **Windows 11**
+
+### 必需软件
+
+<BadgeList>
+  <BadgeList.Badge variant="success">Node.js 18+</BadgeList.Badge>
+  <BadgeList.Badge variant="success">pnpm 9+</BadgeList.Badge>
+  <BadgeList.Badge variant="success">Rust 1.70+</BadgeList.Badge>
+  <BadgeList.Badge variant="success">Git</BadgeList.Badge>
+</BadgeList>
+
+## 安装 Node.js
+
+### 下载和安装
+
+1. 访问 [nodejs.org](https://nodejs.org/)
+2. 下载 LTS 版本
+3. 运行安装程序
+
+### 验证安装
+
+```bash
+node --version
+npm --version
+```
+
+## 安装 pnpm
+
+### 使用 npm 安装
+
+```bash
+npm install -g pnpm
+```
+
+### 验证安装
+
+```bash
+pnpm --version
+```
+
+## 安装 Rust
+
+### 使用 rustup 安装
+
+1. 访问 [rustup.rs](https://rustup.rs/)
+2. 下载 rustup-init.exe
+3. 运行安装程序
+
+### 验证安装
+
+```bash
+rustc --version
+cargo --version
+```
+
+<Alert type="info">
+Rust 首次安装会下载必要的组件，可能需要几分钟时间。
+</Alert>
+
+## 安装 Git
+
+### 下载和安装
+
+1. 访问 [git-scm.com](https://git-scm.com/)
+2. 下载 Windows 版本
+3. 运行安装程序
+
+### 验证安装
+
+```bash
+git --version
+```
+
+## 克隆项目
+
+```bash
+git clone https://github.com/shenjianZ/keycast-windows.git
+cd keycast-windows
+```
+
+## 安装依赖
+
+### 前端依赖
+
+```bash
+pnpm install
+```
+
+### Rust 依赖
+
+Rust 依赖会自动构建，首次运行可能需要较长时间。
+
+## 推荐 IDE
+
+### Zed
+
+推荐的扩展：
+
+<BadgeList>
+  <BadgeList.Badge variant="info">rust-analyzer</BadgeList.Badge>
+  <BadgeList.Badge variant="info">ESLint</BadgeList.Badge>
+  <BadgeList.Badge variant="info">Prettier</BadgeList.Badge>
+  <BadgeList.Badge variant="info">Tailwind CSS IntelliSense</BadgeList.Badge>
+</BadgeList>
+
+
+## 环境变量
+
+如果需要测试自动更新，需要注入环境变量 `KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY`
+
+```powershell
+pnpm tauri signer generate -w $HOME/.tauri/keycast-windows.key
+```
+
+- 生成后对应关系：
+  - `$HOME/.tauri/keycast-windows.key.pub` 文件内容 -> `KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY`
+  - `$HOME/.tauri/keycast-windows.key` 文件内容 -> `KEYCAST_WINDOWS_TAURI_SIGNING_PRIVATE_KEY`
+  - 生成私钥时输入的密码 -> `KEYCAST_WINDOWS_TAURI_SIGNING_PRIVATE_KEY_PASSWORD`
+- Release 会额外上传 `latest.json`、Windows `setup.exe` 和对应的 `.exe.sig` 文件，供应用内更新使用。
+
+```powershell
+[Environment]::SetEnvironmentVariable(
+  "KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY",
+  (Get-Content $HOME\.tauri\keycast-windows.key.pub -Raw).Trim(),
+  "User"
+)
+```
+
+- 查看是否写入成功：
+
+```powershell
+[Environment]::GetEnvironmentVariable(
+  "KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY",
+  "User"
+)
+```
+
+- 删除该变量：
+
+```powershell
+[Environment]::SetEnvironmentVariable(
+  "KEYCAST_WINDOWS_TAURI_UPDATER_PUBLIC_KEY",
+  $null,
+  "User"
+)
+```
+
+- 设置或删除后，重新打开一个新的终端窗口再执行 `pnpm tauri dev`。
+
+## 验证环境
+
+运行以下命令验证环境配置：
+
+```bash
+# 检查 Node.js
+node --version
+
+# 检查 pnpm
+pnpm --version
+
+# 检查 Rust
+rustc --version
+cargo --version
+
+# 检查 Git
+git --version
+```
+
+**下一步**: 了解如何 [本地运行](docs/development/local-development) 项目。
+
+# /zh-cn/docs/development/introduction
+
+# 项目介绍
+
+Keycast Windows 是一个使用现代技术栈构建的桌面应用，为 Windows 用户提供专业的按键屏显功能。
+
+## 项目概述
+
+Keycast Windows 采用前后端分离架构：
+- **前端**: 使用 React 19 + TypeScript + Tailwind CSS 构建用户界面
+- **后端**: 使用 Rust + Tauri 2 实现系统级功能
+- **通信**: 通过 Tauri 的事件系统实现前后端通信
+
+## 技术栈
+
+### 前端技术栈
+
+- **React 19** - 用户界面框架
+- **TypeScript** - 类型安全的 JavaScript
+- **Tailwind CSS v4** - 原子化 CSS 框架
+- **Radix UI** - 无头组件库
+- **React Router DOM** - 路由管理
+- **Vite** - 快速的构建工具
+
+### 后端技术栈
+
+- **Rust** - 系统级编程语言
+- **Tauri 2** - 跨平台桌面应用框架
+- **Windows API** - Windows 系统调用
+- **serde** - 序列化/反序列化框架
+- **chrono** - 时间处理库
+
+### 系统依赖
+
+- Tauri 插件系统
+- Windows API (user32.dll)
+- 系统托盘集成
+- 全局快捷键注册
+
+## 架构设计
+
+### 前端架构
+
+```
+src/
+├── lib/              # 工具库
+│   ├── utils.ts      # 工具函数
+│   ├── types.ts      # 类型定义
+│   ├── native.ts     # Tauri API 封装
+│   └── updater.ts    # 更新逻辑
+├── components/       # UI 组件
+│   └── ui/          # Radix UI 基础组件
+├── pages/          # 页面组件
+├── App.tsx         # 应用入口
+└── main.tsx        # React 根组件
+```
+
+### 后端架构
+
+```
+src-tauri/src/
+├── main.rs          # 应用入口
+├── commands/        # Tauri 命令
+│   ├── app_commands.rs
+│   └── keycast_commands.rs
+└── services/        # 业务逻辑
+    ├── keycast_service.rs
+    ├── app_settings_service.rs
+    └── window_service.rs
+```
+
+## 核心模块
+
+### 按键监听系统 (KeycastService)
+
+- 使用 Windows API 监听全局按键
+- 支持 6 种显示模式
+- 高性能按键状态跟踪
+- 内存管理和性能优化
+
+### 配置管理系统
+
+- 按键显示配置 (KeycastOverlayConfig)
+- 应用设置管理 (AppSettingsService)
+- 持久化存储
+- 实时配置同步
+
+### 用户界面
+
+- 响应式设计
+- 深色/浅色主题
+- 国际化支持 (中英文)
+- 无障碍功能
+
+## 开发理念
+
+### 设计原则
+
+1. **简洁高效** - 轻量级设计，不影响系统性能
+2. **用户友好** - 直观的界面，易于配置
+3. **高度可定制** - 丰富的配置选项
+4. **跨平台准备** - 使用 Tauri 为未来跨平台做准备
+
+### 代码规范
+
+- TypeScript 严格模式
+- Rust 最佳实践
+- 清晰的代码注释
+- 模块化设计
+
+## 版本历史
+
+查看 [更新日志](https://github.com/shenjianZ/keycast-windows/releases) 了解详细版本历史。
+
+
+**下一步**: 了解详细的 [技术栈](/docs/development/tech-stack) 信息。
+
+# /zh-cn/docs/development/local-development
+
+---
+title: "本地运行"
+description: "Keycast Windows 本地开发运行指南"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# 本地运行
+
+在本地运行 Keycast Windows 进行开发和调试。
+
+## 开发模式
+
+### 启动开发服务器
+
+```bash
+pnpm tauri dev
+```
+
+这个命令会：
+1. 启动 Vite 开发服务器
+2. 编译 Rust 后端代码
+3. 打开应用窗口
+
+### 热重载
+
+- **前端**: 修改 React/TypeScript 代码会自动热重载
+- **后端**: 修改 Rust 代码会自动重新编译
+
+## 开发命令
+
+### 常用命令
+
+- 启动开发模式
+    ```bash
+    pnpm tauri dev 
+    ```
+-  构建发布版本
+    ```bash
+    pnpm tauri build
+    ```
+- 检查 Rust 代码
+    ```bsah
+    cargo check 
+    ```
+- 同步项目所有版本号
+    ```bash
+    pnpm version:sync 0.1.4
+    ```
+- 格式化前端代码
+    ```bash
+    pnpm format
+    ```
+- 格式化Rust代码
+    ```bash
+    cargo fmt
+    ```
+
+### 开发调试
+
+#### 前端调试
+
+1. 打开浏览器开发者工具
+2. 在应用窗口中按 `F12`
+3. 查看控制台输出和网络请求
+
+#### 后端调试
+
+1. 在终端查看 Rust 编译输出
+2. 使用 `println!` 宏输出调试信息
+3. 查看 Tauri 日志
+
+## 文件监听
+
+### 自动重新编译
+
+以下文件变更会触发重新编译：
+
+- `src/` - React/TypeScript 源码
+- `src-tauri/src/` - Rust 源码
+- `src-tauri/Cargo.toml` - Rust 依赖
+
+### 不需要重启
+
+修改以下文件不需要重新编译：
+
+- 样式文件
+- 静态资源
+- 配置文件
+
+## 常见问题
+
+### 编译错误
+
+<Alert type="warning">
+Rust 编译失败
+
+确保 Rust 工具链已正确安装：
+```bash
+rustup update
+```
+</Alert>
+
+### 依赖问题
+
+<Alert type="warning">
+依赖安装失败
+
+尝试清理并重新安装：
+```bash
+rm -rf node_modules
+rm pnpm-lock.yaml
+pnpm install
+```
+</Alert>
+
+### 权限问题
+
+<Alert type="warning">
+Windows Defender 拦截
+
+将项目目录添加到 Windows Defender 的排除列表。
+
+</Alert>
+
+
+## 性能优化
+
+### 加快编译速度
+
+1. 使用 SSD 存储项目
+2. 关闭不必要的杀毒软件
+3. 增加系统内存
+
+### 减少重新编译
+
+- 批量修改代码后再运行
+- 避免频繁保存
+
+## 开发技巧
+
+
+### 使用 TypeScript 类型提示
+
+充分利用 TypeScript 的类型提示和自动补全功能。
+
+
+### 利用 Git 分支
+
+使用功能分支进行开发，保持主分支稳定。
+</Callout>
+
+
+### 定期提交代码
+
+频繁提交代码，方便回滚和版本管理。
+
+
+**下一步**: 了解如何 [构建打包](docs/development/building) 应用。
+
+# /zh-cn/docs/development/project-structure
+
+# 项目结构
+
+Keycast Windows 采用清晰的模块化结构，便于开发和维护。
+
+## 目录结构
+
+```
+keycast-windows/
+├── src/                    # React 前端源码
+│   ├── lib/               # 工具库
+│   ├── components/        # UI 组件
+│   ├── pages/            # 页面组件
+│   ├── App.tsx           # 应用入口
+│   └── main.tsx          # React 根组件
+├── src-tauri/            # Tauri 后端源码
+│   ├── src/              # Rust 源码
+│   │   ├── main.rs       # 入口文件
+│   │   ├── commands/     # Tauri 命令
+│   │   └── services/    # 业务逻辑
+│   ├── Cargo.toml        # Rust 依赖配置
+│   └── tauri.conf.json   # Tauri 应用配置
+├── docs/                 # 文档网站
+│   ├── public/           # 文档内容
+│   ├── src/              # 文档源码
+│   └── package.json      # 文档依赖
+├── keycast.html          # 按键屏显窗口
+└── package.json         # 前端依赖配置
+```
+
+## 前端结构
+
+### lib/ 目录
+
+```
+lib/
+├── utils.ts              # 工具函数
+├── types.ts              # TypeScript 类型定义
+├── native.ts             # Tauri API 封装
+└── updater.ts            # 更新逻辑
+```
+
+- **utils.ts** - 通用工具函数
+- **types.ts** - 全局类型定义
+- **native.ts** - Tauri invoke API 封装
+- **updater.ts** - 自动更新状态管理
+
+### components/ 目录
+
+```
+components/
+├── ui/                   # Radix UI 基础组件
+├── AppShell.tsx         # 应用框架
+├── SettingsGroup.tsx    # 设置分组组件
+└── [其他组件...]
+```
+
+### pages/ 目录
+
+```
+pages/
+├── SettingsPage.tsx     # 设置页面
+└── AboutPage.tsx        # 关于页面
+```
+
+## 后端结构
+
+### src/ 目录
+
+```
+src/
+├── main.rs              # 应用入口
+├── commands/            # Tauri 命令
+│   ├── app_commands.rs         # 应用设置命令
+│   └── keycast_commands.rs     # 按键监听命令
+└── services/            # 业务逻辑服务
+    ├── keycast_service.rs      # 按键监听核心
+    ├── app_settings_service.rs # 应用设置管理
+    └── window_service.rs       # 窗口和托盘管理
+```
+
+### 配置文件
+
+- **Cargo.toml** - Rust 依赖和包配置
+- **tauri.conf.json** - Tauri 应用配置（窗口、插件等）
+- **build.rs** - 构建脚本（如果需要）
+
+## 文档结构
+
+```
+docs/
+├── public/
+│   ├── config/          # 配置文件
+│   └── docs/           # 文档内容
+├── src/
+│   └── components/     # 自定义 MDX 组件
+└── package.json        # 文档依赖
+```
+
+## 文件命名约定
+
+### React 组件
+
+- PascalCase: `SettingsPage.tsx`, `AppShell.tsx`
+- 组件文件与组件名一致
+
+### Rust 模块
+
+- snake_case: `keycast_service.rs`, `app_commands.rs`
+- 模块文件与模块名一致
+
+### 文档文件
+
+- kebab-case: `display-modes.md`, `tech-stack.md`
+- 使用小写字母和连字符
+
+**下一步**: 了解 [开发环境](docs/development/development-environment) 配置。
+
+# /zh-cn/docs/development/tech-stack
+
+# 技术栈
+
+Keycast Windows 采用现代化的技术栈，为用户提供稳定高效的桌面应用体验。
+
+## 前端技术栈
+
+### 核心框架
+
+- **React 19** - 用户界面框架
+- **TypeScript** - 类型安全的 JavaScript
+- **Vite** - 快速的构建工具
+
+### UI 组件
+
+- **Radix UI** - 无头组件库，提供可访问的 UI 原语
+- **Tailwind CSS v4** - 原子化 CSS 框架
+- **Lucide React** - 精美的图标库
+
+### 路由和状态
+
+- **React Router DOM v7** - 客户端路由
+- **React Hooks** - 状态管理和副作用处理
+
+## 后端技术栈
+
+### 核心技术
+
+- **Rust** - 系统级编程语言，提供内存安全和性能
+- **Tauri 2** - 跨平台桌面应用框架
+
+### Windows 集成
+
+- **Windows API** - 通过 winapi crate 调用系统 API
+- **GetAsyncKeyState** - 全局按键监听
+
+### 数据处理
+
+- **serde** - 序列化/反序列化框架
+- **chrono** - 日期和时间处理
+
+## Tauri 插件
+
+### 官方插件
+
+- **tauri-plugin-opener** - 打开外部链接
+- **tauri-plugin-autostart** - 开机自启管理
+- **tauri-plugin-global-shortcut** - 全局快捷键
+- **tauri-plugin-updater** - 自动更新系统
+
+## 开发工具
+
+### 包管理器
+
+- **pnpm** - 快速、节省磁盘空间的包管理器
+
+### 代码质量
+
+- **TypeScript strict mode** - 严格类型检查
+- **ESLint** - 代码检查
+- **Prettier** - 代码格式化
+
+## 架构特点
+
+### 前后端分离
+
+- 前端：React + TypeScript 运行在 WebView 中
+- 后端：Rust 处理系统级操作
+- 通信：通过 Tauri 的事件系统进行前后端通信
+
+### 类型安全
+
+- 前后端共享 TypeScript 类型定义
+- Rust 的类型系统确保后端安全性
+- Tauri 自动生成类型安全的 API 绑定
+
+### 性能优化
+
+- Rust 零成本抽象
+- 最小化打包体积
+- 快速启动和响应
+
+
+**下一步**: 了解 [项目结构](docs/development/project-structure)。
+
+# /zh-cn/docs/development
+
+# 开发指南
+
+本章节面向开发者，介绍项目的技术栈和开发指南。
+
+## 章节目录
+
+- [项目介绍](docs/development/introduction)
+- [技术栈](docs/development/tech-stack)
+- [项目结构](docs/development/project-structure)
+- [开发环境](docs/development/development-environment)
+- [本地运行](docs/development/local-development)
+- [构建打包](docs/development/building)
+- [贡献指南](docs/development/contributing)
+
+# /zh-cn/docs/getting-started/basic-usage
+
+# 基础使用
+
+## 启动按键监听
+
+> keycast 按键捷监听默认是自动开启的
+
+- 点击主窗口设置界面的 按键监听 的开关按钮
+- 使用全局快捷键（默认为Ctrl+Shift+K）
+
+
+## 查看按键显示
+
+启用按键监听后，尝试以下操作：
+
+- 按 `Ctrl+C` - 显示组合键
+- 按 `A` `S` `D` - 根据显示模式显示
+- 按 `Ctrl+Shift+Esc` - 显示复杂组合键
+
+屏显窗口会实时显示按键信息。
+
+## 停止按键监听
+
+- 点击主窗口设置界面的 按键监听 的开关按钮
+- 使用全局快捷键（默认为Ctrl+Shift+K）
+
+
+## 退出应用
+
+关闭主窗口：点击主窗口的关闭按钮（×），应用会最小化到托盘。
+
+如果需要完全退出此软件,右键点击托盘图标，选择 **"退出"**
+
+下一步: 查看 [配置入门](/docs/getting-started/configuration) 了解如何自定义按键显示。
+
+# /zh-cn/docs/getting-started/configuration
+
+---
+title: "配置入门"
+description: "Keycast Windows 基础配置指南"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# 配置入门
+
+> 点击主窗口的左侧的**设置** ，切换到设置界面
+
+## 样式配置
+
+1. 选择主题
+    在 **主题** 下拉菜单中选择预置主题。
+
+    **推荐**: 录屏场景推荐使用 `text-only` 或 `minimal-light` 主题，保持简洁清晰。
+
+2. 自定义颜色
+    
+    1. 点击 **"文字颜色"** 色块，选择自定义颜色
+    2. 启用 **"显示线条"**，可以显示强调线条
+    3. 点击 **"线条颜色"** 色块可以输入16进制颜色代码（如 `#FF5733`）
+
+### 调整位置
+
+拖动 **X** 和 **Y** 滑块调整屏显窗口位置：
+
+- **X**: 水平位置（0 = 屏幕左侧，数值越大越靠右）
+- **Y**: 垂直位置（0 = 屏幕顶部，数值越大越靠下）
+
+可以在启用按键监听后，实时预览位置调整效果。
+
+
+## 显示模式配置
+
+### 选择显示模式
+
+<Callout variant="primary">
+    推荐从组合键优先模式开始，这个模式适合大多数使用场景。
+</Callout>
+
+在 **显示模式** 下拉菜单中选择：
+
+<BadgeList>
+  <BadgeList.Badge variant="primary">仅组合键</BadgeList.Badge>
+  <BadgeList.Badge variant="primary">仅单个按键</BadgeList.Badge>
+  <BadgeList.Badge variant="primary">组合键优先</BadgeList.Badge>
+  <BadgeList.Badge variant="success">所有按键连续</BadgeList.Badge>
+  <BadgeList.Badge variant="success">所有按键队列</BadgeList.Badge>
+  <BadgeList.Badge variant="success">智能混合</BadgeList.Badge>
+</BadgeList>
+
+
+### 调整组合窗口
+
+**"组合窗口"** 参数控制多长时间内的按键会被合并为组合键：
+
+- 默认值：`500 ms`
+- 推荐范围：`300-800 ms`
+- **设置过小**: 可能将快速按下的组合键拆分开
+- **设置过大**: 可能将独立的按键错误合并
+
+## 系统配置
+
+### 开机自启
+
+启用 **开机自启** 选项，应用会在Windows登录时自动启动：
+
+<Alert type="success">
+关闭主窗口后，应用仍会驻留在系统托盘中，可通过托盘图标重新打开主窗口。
+</Alert>
+
+### 语言切换
+
+在 **"语言"** 下拉菜单中选择：
+
+- **跟随系统** - 自动根据系统语言切换
+- **简体中文** - 强制使用中文界面
+- **English** - 强制使用英文界面
+
+
+**下一步**: 查看 [用户指南](/docs/user-guide/overview) 了解更多配置选项。
+
+# /zh-cn/docs/getting-started/installation
+
+---
+title: "下载安装"
+description: "Keycast Windows 安装指南"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# 下载安装
+
+## 系统要求
+
+<Alert type="warning">
+操作系统: Windows 10 (版本 1809) 或 Windows 11 (64 位)
+
+内存: 至少 4 GB RAM
+
+磁盘空间: 约 50 MB 可用空间
+
+</Alert>
+
+## 下载方式
+
+### 官方渠道
+
+推荐从 GitHub Releases 页面下载最新版本：
+
+
+访问 [Releases 页面](https://github.com/shenjianZ//keycast-windows/releases) 下载：
+- `keycast-windows-setup-x.x.x.exe` - 安装程序（推荐）
+
+双击运行 `keycast-windows-setup-x.x.x.exe`，按照向导完成安装
+
+<Callout variant="primary">
+提示: 安装程序会自动配置 Windows 防火墙规则，允许应用监听键盘输入。
+</Callout>
+
+
+## 验证安装
+
+启动应用后，系统托盘出现 Keycast 图标
+
+下一步: 查看 [基础使用](/docs/getting-started/basic-usage) 了解如何开始使用。
+
+# /zh-cn/docs/getting-started
+
+# 快速开始
+
+欢迎使用 Keycast Windows！本章节将帮助你快速安装和配置应用。
+
+## 章节目录
+
+- [下载安装](docs/getting-started/installation)
+- [基础使用](docs/getting-started/basic-usage)
+- [配置入门](docs/getting-started/configuration)
+
+# /zh-cn/docs/user-guide/display-modes
+
+---
+title: "显示模式"
+description: "Keycast Windows 六种显示模式介绍"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+
+
+# 显示模式
+
+Keycast Windows 提供 6 种显示模式，每种模式都针对特定的使用场景优化。
+
+## 模式概览
+
+<BadgeList>
+  <BadgeList.Badge variant="primary">仅组合键</BadgeList.Badge>
+  <BadgeList.Badge variant="primary">仅单个按键</BadgeList.Badge>
+  <BadgeList.Badge variant="primary">组合键优先</BadgeList.Badge>
+  <BadgeList.Badge variant="success">所有按键连续</BadgeList.Badge>
+  <BadgeList.Badge variant="success">所有按键队列</BadgeList.Badge>
+  <BadgeList.Badge variant="success">智能混合</BadgeList.Badge>
+</BadgeList>
+
+## 快速选择指南
+
+- 软件教程/演示：使用 **仅组合键** 模式，突出快捷键操作。
+- 打字教学/密码输入：使用 **仅单个按键** 模式，清晰展示输入内容。
+- 游戏/快速操作：使用 **所有按键连续** 模式，完整记录按键序列。
+- 长时间操作记录：使用 **所有按键队列** 模式，持久化显示操作历史。
+- 通用场景：使用 **组合键优先** 模式，适应性最强。
+- 高级用户：使用 **智能混合** 模式，获得最佳自适应体验。
+
+
+## 模式简介
+
+### 1. 仅组合键 (combo-only)
+
+只显示包含修饰键的组合键，忽略单个字母、数字、符号键。
+
+**示例**:
+- `Ctrl+C` → 显示
+- `A` → 不显示
+
+**适用场景**: 软件快捷键演示
+
+### 2. 仅单个按键 (single-only)
+
+只显示单个字母、数字、符号键，忽略修饰键组合。
+
+**示例**:
+- `A` → 显示
+- `Ctrl+C` → 不显示
+
+**适用场景**: 打字教学、密码输入演示
+
+### 3. 组合键优先 (combo-precedence)
+
+优先显示组合键，无组合键时显示单个按键。
+
+**示例**:
+- `Ctrl+C` → 显示
+- `A` → 显示
+
+**适用场景**: 通用场景，适应性最强
+
+### 4. 所有按键连续 (all-sequential)
+
+显示所有按键，连续按键时按滚动方向显示。
+
+**示例**:
+- `Ctrl+C` `A` `S` `D` → 全部显示
+
+**适用场景**: 游戏操作、快速打字
+
+### 5. 所有按键队列 (all-sequential-persistent)
+
+显示所有按键，持久化显示直到超时。
+
+**示例**:
+- 输入 `Ctrl+C` `A` `S` `D` → 持续显示
+- 等待超时 → 清空
+
+**适用场景**: 长时间操作记录
+
+### 6. 智能混合 (smart-mixed)
+
+根据按键节奏自动切换模式。
+
+**示例**:
+- 慢速输入 → 单独显示
+- 快速输入 → 连续显示
+
+**适用场景**: 自适应场景
+
+
+**下一步**: 了解如何配置 [主题样式](/docs/user-guide/themes)。
+
+# /zh-cn/docs/user-guide/overview
+
+# 功能概览
+
+Keycast Windows 是一个功能完善的按键屏显工具，以下是核心功能概览。
+
+## 核心功能
+
+### 1. 按键监听系统
+
+全局键盘输入监听，捕获所有按键事件并实时显示。
+
+### 2. 显示模式系统
+
+提供 6 种显示模式，适应不同的使用场景：
+
+- **仅组合键** - 只显示 `Ctrl`、`Alt`、`Shift` 、`Win`等修饰键组合
+- **仅单个按键** - 只显示单个字母、数字、符号键
+- **组合键优先** - 优先显示组合键，无组合时显示单个按键
+- **所有按键连续** - 显示所有按键，连续按键时水平或纵向滚动
+- **所有按键队列** - 显示所有按键，持久化显示直到超时
+- **智能混合** - 根据按键节奏智能切换显示模式
+
+详见：[显示模式详解](/docs/advanced/display-modes)
+
+### 3. 主题系统
+
+12 种精心设计的预置主题，涵盖不同风格：
+
+**键盘帽风格**:
+- `keycaps-dark` - 深色键盘帽风格
+- `keycaps-light` - 浅色键盘帽风格
+
+**极简风格**:
+- `text-only` - 纯文本，无背景
+- `minimal-light` - 极简浅色主题
+
+**广播风格**:
+- `broadcast-orange` - 橙色广播风格
+- `broadcast-green` - 绿色广播风格
+
+**玻璃质感**:
+- `glass-soft` - 柔和玻璃效果
+- `fresh-mint` - 清新薄荷风格
+- `sky-card` - 天空卡片风格
+
+**特殊风格**:
+- `terminal` - 终端风格
+- `neon-cyan` - 霓虹青色
+- `paper-card` - 纸质卡片
+
+详见：[主题配置](/docs/user-guide/themes)
+
+### 4. 自定义样式
+
+- **文字颜色** - 自定义文本颜色（RGB/HEX）
+- **线条颜色** - 自定义强调线条颜色
+- **显示线条** - 控制是否显示强调线条
+
+### 5. 位置与时间配置
+
+- **X/Y 位置** - 精确调整屏显窗口位置
+- **组合窗口** - 控制组合键合并的时间窗口
+- **连续按键窗口** - 智能混合模式下的连续判定时间
+- **队列空闲超时** - 队列模式下的清空超时时间
+
+### 6. 滚动与计数
+
+- **滚动方向** - 横向、纵向或淡入淡出
+- **最多显示按键数** - 控制连续按键时的显示数量
+- **显示按键计数** - 在连续显示时显示按键数量
+
+## 系统功能
+
+### 1. 全局快捷键
+
+- 自定义系统级快捷键
+- 快速切换按键监听状态
+- 默认快捷键：`Ctrl+Shift+K`
+
+详见：[快捷键设置](/docs/user-guide/shortcuts)
+
+### 2. 托盘集成
+
+- 最小化到系统托盘
+- 托盘图标右键菜单
+- 托盘图标状态指示（活跃/待机）
+
+### 3. 开机自启
+
+- 支持开机自动启动
+- 与托盘模式配合，实现后台运行
+
+### 4. 国际化
+
+- 内置中英文界面
+- 支持跟随系统语言
+- 实时切换无需重启
+
+### 5. 自动更新
+
+- 启动时静默检查更新
+- 应用内下载更新包
+- 一键安装更新
+
+详见：[更新管理](/docs/user-guide/updates)
+
+## 界面主题
+
+- **浅色主题** - 明亮的应用界面
+- **深色主题** - 护眼的应用界面
+- **跟随系统** - 自动适应系统主题
+
+## 适用场景
+
+### 📹 视频制作
+
+- 软件教程录制
+- 产品演示视频
+- 技术分享视频
+
+### 💼 远程协作
+
+- 在线技术演示
+- 远程培训教学
+- 产品展示会议
+
+### 🎮 内容创作
+
+- 游戏直播
+- 软件教学直播
+- 技能分享直播
+
+### 🎓 教育培训
+
+- 软件操作培训
+- 编程教学
+- 技术讲座
+
+
+**下一步**: 根据你的使用场景，选择合适的 [显示模式](/docs/user-guide/display-modes) 和 [主题](/docs/user-guide/themes)。
+
+# /zh-cn/docs/user-guide/position
+
+# 位置调整
+
+调整屏显窗口在屏幕上的位置，使其适应你的工作流程。
+
+## 位置配置
+
+在设置页面的 **"位置与节奏"** 部分，你可以调整：
+
+### X 坐标
+
+- **范围**: 0 到屏幕宽度
+- **说明**: 屏显窗口的水平位置，0表示屏幕左侧边缘
+
+### Y 坐标
+
+- **范围**: 0 到屏幕高度
+- **说明**: 屏显窗口的垂直位置,0表示屏幕顶部边缘
+
+## 常见位置设置
+
+
+- 录屏场景
+
+    推荐将屏显放在屏幕顶部中央，避免遮挡重要内容。
+    
+    **推荐设置**: X=700, Y=24
+
+- 直播场景
+
+    可以放在屏幕角落，不干扰游戏或应用界面。
+    
+    **推荐设置**: X=24, Y=24
+
+- 演示场景
+
+    放在屏幕顶部中央，清晰可见。
+    
+    **推荐设置**: X=700, Y=24
+
+
+## 实时预览
+
+启用按键监听后，调整位置滑块可以实时预览效果，方便你找到最合适的位置。
+
+
+**下一步**: 了解如何配置 [快捷键设置](docs/user-guide/shortcuts)。
+
+# /zh-cn/docs/user-guide/shortcuts
+
+---
+title: "快捷键设置"
+description: "配置全局快捷键快速切换按键监听"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# 快捷键设置
+
+使用全局快捷键可以快速切换按键监听状态，无需打开主窗口。
+
+按键监听的全局快捷键默认为`Ctrl+Shift+K`
+
+### 自定义按键监听快捷键
+
+<Alert type="info">
+快捷键必须包含至少一个修饰键（Ctrl、Alt、Shift 或 Win）。
+</Alert>
+在设置页面：
+
+1. 启用 **启用全局快捷键**
+2. 点击 **开始录制** 按钮
+3. 按下你想要的组合键,松开录制成功
+
+
+## 快捷键功能
+
+按下按键监听的快捷键时：
+- 如果按键监听未启用 → 启用监听
+- 如果按键监听已启用 → 停止监听
+
+屏幕会显示通知提示当前状态。
+
+## 禁用快捷键
+
+如果不需要按键监听的全局快捷键功能：
+
+1. 在设置页面找到 **全局快捷键**
+2. 取消勾选 **启用全局快捷键"**
+
+## 重置为默认
+
+点击 **默认** 按钮可以将快捷键重置为 `Ctrl+Shift+K`。
+
+## 使用场景
+
+<BadgeList>
+  <BadgeList.Badge variant="primary">录屏时快速开始</BadgeList.Badge>
+  <BadgeList.Badge variant="warning">直播时随时切换</BadgeList.Badge>
+  <BadgeList.Badge variant="success">演示时灵活控制</BadgeList.Badge>
+</BadgeList>
+
+**下一步**: 了解 [系统设置](docs/user-guide/system-settings)。
+
+# /zh-cn/docs/user-guide/system-settings
+
+---
+title: "系统设置"
+description: "Keycast Windows 系统设置说明"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# 系统设置
+
+配置应用的行为和系统集成选项。
+
+## 开机自启
+
+### 功能说明
+
+启用后，Keycast Windows 会在系统登录时自动启动。
+
+### 如何设置
+
+在设置页面的 **启动** 部分：
+
+1. 勾选 **开机自启** 选项
+
+<Alert type="success">
+开机自启后，应用会在后台运行，可通过系统托盘图标访问。
+</Alert>
+
+### 托盘集成
+
+开机自启与托盘模式配合使用：
+- 应用启动后最小化到系统托盘
+- 不占用任务栏空间
+- 通过托盘图标控制应用
+
+## 语言设置
+
+### 支持的语言
+
+- **简体中文** (zh-CN)
+- **English** (en-US)
+- **跟随系统** - 自动根据系统语言切换
+
+### 如何切换
+
+在设置页面的 **语言** 部分：
+
+1. 点击 **语言** 下拉菜单
+2. 选择你想要的语言
+
+
+<Alert type="success">
+语言切换立即生效，无需重启应用。
+</Alert>
+
+## 界面主题
+
+### 主题选项
+
+- **浅色** - 明亮的应用界面
+- **深色** - 护眼的应用界面
+- **跟随系统** - 自动适应系统主题
+
+### 如何切换
+
+在设置页面的 **样式* 部分：
+
+1. 点击 **主题**下拉菜单
+2. 选择你想要的主题 
+
+## 启动时监听
+
+### 功能说明
+
+启用后，应用启动时会自动开始监听键盘输入，无需手动点击"开始"按钮。
+
+### 如何设置
+
+在设置页面的 **显示** 部分：
+
+1. 勾选 **按键监听** 选项
+
+<Callout variant="secondary">
+如果启用了开机自启和启动时监听，系统登录后会自动开始按键监听。
+</Callout>
+
+## 设置存储
+
+所有设置都会自动保存到：
+```
+~/.keycast-windows/app-settings.json 
+~/.keycast-windows/keycast-overlay.json
+```
+**下一步**: 了解 [更新管理](docs/user-guide/updates)。
+
+# /zh-cn/docs/user-guide/themes
+
+# 主题配置
+
+Keycast Windows 提供 12 种精心设计的预置主题，涵盖不同风格和场景。
+
+## 主题分类
+
+### 键盘帽风格
+
+模拟真实键盘按键的视觉效果。
+
+**keycaps-dark** - 深色键盘帽风格，适合深色背景录制
+
+**keycaps-light** - 浅色键盘帽风格，适合浅色背景录制
+
+### 极简风格
+
+简洁纯粹的视觉设计。
+
+**text-only** - 纯文本显示，无背景，最简洁的样式（推荐）
+
+**minimal-light** - 极简浅色主题，清爽干净
+
+### 广播风格
+
+适合直播和录屏场景的高对比度主题。
+
+**broadcast-orange** - 橙色广播风格，高对比度，醒目突出（推荐）
+
+**broadcast-green** - 绿色广播风格，护眼舒适
+
+### 玻璃质感
+
+现代玻璃拟态设计风格。
+
+**glass-soft** - 柔和玻璃效果，现代感十足
+
+**fresh-mint** - 清新薄荷风格，舒适自然
+
+**sky-card** - 天空卡片风格，轻盈通透
+
+### 特殊风格
+
+独特的视觉风格主题。
+
+**terminal** - 终端风格，适合技术演示
+
+**neon-cyan** - 霓虹青色，科技感强烈
+
+**paper-card** - 纸质卡片风格，温馨自然
+
+
+除了预置主题，你还可以自定义颜色。
+
+## 文字、线条颜色
+### 文字颜色
+
+点击 **文字颜色** 色块：
+- 支持选择预定定义颜色
+- 支持取色器选择
+- 支持 HEX 颜色代码（如 `#FF5733`）
+
+### 线条颜色
+
+启用 **显示线条** 后，可以自定义强调线条颜色：
+- 用于突出显示按键组合
+- 推荐使用与文字颜色对比度高的颜色
+
+**下一步**: 了解如何调整 [位置设置](/docs/user-guide/position)。
+
+# /zh-cn/docs/user-guide/updates
+
+---
+title: "更新管理"
+description: "Keycast Windows 自动更新系统"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# 更新管理
+
+Keycast Windows 内置自动更新系统，让你轻松获取最新功能和修复。
+
+## 自动更新
+
+### 检查更新
+
+应用启动时会自动检查更新：
+- 后台静默检查
+- 不干扰正常使用
+- 发现新版本时显示通知
+
+### 更新流程
+
+1. **检查更新** - 启动时自动检查
+2. **下载更新** - 显示下载进度
+3. **安装更新** - 一键安装更新包
+4. **重启应用** - 完成更新
+
+<Alert type="info">
+更新包下载完成后，你可以选择合适的时间点击"安装更新"按钮。
+</Alert>
+
+## 更新状态
+
+### 各种状态说明
+
+- **正在检查...** - 正在连接更新服务器
+- **发现新版本** - 有可用更新，显示版本号
+- **正在下载...** - 正在下载更新包，显示进度
+- **已下载** - 更新包已准备就绪
+- **当前已是最新** - 没有可用更新
+- **检查失败** - 网络连接问题或服务器错误
+- **下载失败** - 网络中断或存储空间不足
+
+## 手动检查
+
+如果想在启动时手动检查更新：
+
+1. 打开主窗口
+2. 点击 **设置** 按钮
+3. 在 **应用更新** 部分点击 **检查更新** 按钮
+
+## 更新配置
+
+### 自动检查
+
+默认启用启动时自动检查。
+
+### 关闭自动检查
+
+如果不想自动检查更新，可以在应用设置中关闭。
+
+## 版本历史
+
+查看更新历史：
+1. 访问 [GitHub Releases](https://github.com/shenjianZ/keycast-windows/releases)
+2. 查看每个版本的更新内容
+
+## 常见问题
+
+
+<BadgeList.Badge variant="error">更新失败？</BadgeList.Badge>
+检查网络连接，确保能访问 GitHub
+<BadgeList.Badge variant="error">下载慢？</BadgeList.Badge>
+可能是网络问题，请稍后重试
+<BadgeList.Badge variant="error">安装失败？</BadgeList.Badge>
+关闭应用后重试，或手动下载安装
+
+# /zh-cn/docs/user-guide
+
+# 用户指南
+
+本章节介绍 Keycast Windows 的功能和使用方法。
+
+## 章节目录
+
+- [功能概览](docs/user-guide/overview)
+- [显示模式](docs/user-guide/display-modes)
+- [主题配置](docs/user-guide/themes)
+- [位置调整](docs/user-guide/position)
+- [快捷键设置](docs/user-guide/shortcuts)
+- [系统设置](docs/user-guide/system-settings)
+- [更新管理](docs/user-guide/updates)
+
+# /zh-cn/docs
+
+# 文档
+
+欢迎使用 Keycast Windows 文档！
+
+## 文档目录
+
+- [快速开始](docs/getting-started/installation)
+- [用户指南](docs/user-guide)
+- [高级功能](docs/advanced)
+- [开发指南](docs/development)
+
+# /zh-cn/index
+
+---
+title: "Keycast Windows"
+description: "简洁高效的 Windows 桌面按键屏显工具"
+author: "Keycast Team"
+createdAt: 2026-03-23
+---
+
+# Keycast Windows
+
+<Callout variant="primary">
+一个简洁、高效的 Windows 桌面按键屏显工具，为录屏、直播、演示和教学提供清晰的按键反馈。
+</Callout>
+
+
+- 轻量透明屏显窗口，不影响桌面操作，完美适配录屏和直播场景。
+
+- 12 种预置主题，支持自定义颜色和线条配置，满足不同视觉需求。
+
+- 6 种显示模式，从简单的组合键到智能混合模式，适应各种使用场景。
+
+- 位置、时间窗口、滚动方向等全方位配置，打造个性化按键显示体验。
+
+- 内置中英文界面，支持实时切换，国际化用户友好。
+
+- 内置自动更新系统，及时获取最新功能和修复。
+
+
+## 快速开始
+
+<Alert type="info">
+系统要求: Windows 10/11 (64 位)
+</Alert>
+
+### 安装
+
+从 [GitHub Releases](https://github.com/shenjianZ/keycast-windows/releases) 下载最新的安装包并运行。
+
+### 基础使用
+
+1. 启动应用后，点击 **"开始"** 按钮启用按键监听
+2. 按下任意键盘组合，屏显窗口将实时显示
+3. 在设置页面调整主题、位置和显示模式
+4. 设置全局快捷键，快速切换按键监听状态
+
+## 主要功能
+
+### 显示模式
+
+Keycast Windows 提供 6 种显示模式，满足不同使用场景：
+
+<BadgeList>
+  <BadgeList.Badge variant="primary">仅组合键</BadgeList.Badge>
+  <BadgeList.Badge variant="primary">仅单个按键</BadgeList.Badge>
+  <BadgeList.Badge variant="primary">组合键优先</BadgeList.Badge>
+  <BadgeList.Badge variant="success">所有按键连续</BadgeList.Badge>
+  <BadgeList.Badge variant="success">所有按键队列</BadgeList.Badge>
+  <BadgeList.Badge variant="success">智能混合</BadgeList.Badge>
+</BadgeList>
+
+详细了解每种模式的使用场景，请查看 [显示模式详解](/docs/advanced/display-modes)。
+
+### 主题系统
+
+12 种精心设计的预置主题：
+
+<BadgeList>
+  <BadgeList.Badge variant="default">keycaps-dark</BadgeList.Badge>
+  <BadgeList.Badge variant="default">keycaps-light</BadgeList.Badge>
+  <BadgeList.Badge variant="default">text-only</BadgeList.Badge>
+  <BadgeList.Badge variant="info">broadcast-orange</BadgeList.Badge>
+  <BadgeList.Badge variant="info">broadcast-green</BadgeList.Badge>
+  <BadgeList.Badge variant="warning">minimal-light</BadgeList.Badge>
+  <BadgeList.Badge variant="warning">glass-soft</BadgeList.Badge>
+  <BadgeList.Badge variant="warning">fresh-mint</BadgeList.Badge>
+  <BadgeList.Badge variant="success">sky-card</BadgeList.Badge>
+  <BadgeList.Badge variant="success">terminal</BadgeList.Badge>
+  <BadgeList.Badge variant="error">neon-cyan</BadgeList.Badge>
+  <BadgeList.Badge variant="error">paper-card</BadgeList.Badge>
+</BadgeList>
+
+浏览所有主题效果，请访问 [主题配置](/docs/user-guide/themes)。
+
+## 适用场景
+
+<Callout variant="secondary">
+📹 视频教程
+清晰的按键显示帮助观众理解操作流程，提升教程质量。
+
+💻 远程演示
+在技术演示和产品展示中提供直观的按键反馈。
+
+🎮 直播讲解
+游戏直播或软件教学时展示快捷键和操作技巧。
+
+🎓 软件培训
+企业培训和教学场景中，辅助讲解软件操作流程。
+
+</Callout>
+
+## 文档导航
+
+- **[快速开始](/docs/getting-started/installation)** - 下载安装和基础配置
+- **[用户指南](/docs/user-guide/overview)** - 功能介绍和配置说明
+- **[高级功能](/docs/advanced/display-modes)** - 显示模式详解和高级配置
+- **[开发指南](/docs/development/introduction)** - 技术栈和开发文档
+
+## 开源许可
+
+[MIT License](https://github.com/shenjianZ/keycast-windows/blob/master/LICENSE) · 
+[GitHub](https://github.com/shenjianZ/keycast-windows) · 
+[问题反馈](https://github.com/shenjianZ/keycast-windows/issues)

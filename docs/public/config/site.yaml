@@ -2,6 +2,7 @@
 site:
   title: "Keycast Windows 文档"
   description: "Windows 桌面按键屏显工具官方文档 - 为录屏、直播、演示和教学提供清晰的按键反馈"
+  url: "https://keycast-windows.shenjianzlt.workers.dev"
   logo:
     light: "/images/favicon.svg"
     dark: "/images/favicon-dark.svg"
@@ -18,10 +19,30 @@ navbar:
       active: true
     - title: "文档"
       link: "/docs"
+    - title: "更新日志"
+      link: "/changelog"
   actions:
     - type: "github"
       link: "https://github.com/shenjianZ/keycast-windows"
       enabled: true
+
+announcement:
+  enabled: true
+  text: "Keycast Windows 文档已迁移到新版模板，支持更新日志与更完整的页面元信息。"
+  link: "https://github.com/shenjianZ/keycast-windows"
+  dismissible: true
+
+versions:
+  enabled: false
+  current: "v0.1"
+  items:
+    - value: "v0.1"
+      label: "v0.1 (当前)"
+
+changelog:
+  enabled: true
+  title: "更新日志"
+  pageSize: 5
 
 # 侧边栏导航配置
 sidebar:
@@ -120,7 +141,7 @@ footer:
   repository:
     url: "https://github.com/shenjianZ/keycast-windows"
     branch: "master"
-  lastUpdated: "2026-03-23"
+  lastUpdated: "2026-03-28"
   version: "v0.1.6"
   groups:
     - title: "社区"
@@ -187,6 +208,29 @@ mdx:
   componentsPath: "/src/components"
   enabled: true
 
+pageMeta:
+  showLastUpdated: true
+  showEditLink: true
+  showAuthors: true
+  preferGitMeta: true
+
+editLink:
+  enabled: true
+  label: "编辑此页"
+  urlTemplate: "https://github.com/shenjianZ/keycast-windows/edit/master/docs/{filePath}"
+
+feedback:
+  enabled: true
+  endpoint: ""
+  method: "POST"
+  includePageMeta: true
+  labels:
+    helpful: "有帮助"
+    unhelpful: "没帮助"
+    inputPlaceholder: "可以补充哪里不清楚或不准确"
+    submit: "提交反馈"
+    thanks: "感谢反馈"
+
 ai:
   enabled: false
 
@@ -215,6 +259,15 @@ search:
   placeholder: "搜索文档..."
   maxResults: 20
   snippetLength: 120
+
+seo:
+  enabled: true
+  defaultTitle: "Keycast Windows 文档"
+  titleTemplate: "{title} | {siteTitle}"
+  defaultDescription: "Windows 桌面按键屏显工具官方文档"
+  defaultOgImage: "https://keycast-windows.shenjianzlt.workers.dev/images/og-default.png"
+  robots: "index, follow"
+  twitterCard: "summary_large_image"
 
 export:
   enabled: true

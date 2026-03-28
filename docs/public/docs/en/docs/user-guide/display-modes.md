@@ -2,7 +2,7 @@
 title: "Display Modes"
 description: "Introduction to the six display modes of Keycast Windows"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # Display Modes

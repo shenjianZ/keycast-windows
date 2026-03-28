@@ -2,7 +2,7 @@
 title: "基础使用"
 description: "Keycast Windows 基础操作指南"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 基础使用

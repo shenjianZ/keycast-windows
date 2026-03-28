@@ -2,12 +2,13 @@
 title: "配置入门"
 description: "Keycast Windows 基础配置指南"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 配置入门
 
 > 点击主窗口的左侧的**设置** ，切换到设置界面
+
 ## 样式配置
 
 1. 选择主题

@@ -2,7 +2,7 @@
 title: "贡献指南"
 description: "如何为 Keycast Windows 项目做出贡献"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 贡献指南

@@ -2,7 +2,7 @@
 title: "Building"
 description: "Keycast Windows build and release guide"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # Building and Packaging

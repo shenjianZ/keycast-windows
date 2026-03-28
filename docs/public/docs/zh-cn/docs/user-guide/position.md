@@ -2,7 +2,7 @@
 title: "位置调整"
 description: "调整 Keycast Windows 屏显窗口的位置"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 位置调整

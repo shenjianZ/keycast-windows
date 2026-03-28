@@ -2,7 +2,7 @@
 title: "开发指南"
 description: "Keycast Windows 开发文档"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # 开发指南

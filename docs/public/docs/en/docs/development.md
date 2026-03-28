@@ -2,7 +2,7 @@
 title: "Development Guide"
 description: "Keycast Windows development documentation"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # Development Guide

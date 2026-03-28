@@ -2,7 +2,7 @@
 title: "Tech Stack"
 description: "Introduction to the technology stack used by Keycast Windows"
 author: "Keycast Team"
-date: 2026-03-23
+createdAt: 2026-03-23
 ---
 
 # Tech Stack
